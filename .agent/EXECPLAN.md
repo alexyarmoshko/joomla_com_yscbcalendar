@@ -75,6 +75,28 @@ The administrator will be able to configure component settings through the Jooml
 **Files Created:** 22 source files across admin, site, and media folders
 **Package Size:** ~52KB (compressed)
 
+### Future Improvements
+
+1. **Event title trimming for consistent cell sizes** - Event titles displayed in calendar cells should be trimmed to fit the cell dimensions, ensuring equal cell sizes regardless of event title length. When a title is visually trimmed, an ellipsis ("...") must be shown at the end to indicate truncation. The CSS already includes `text-overflow: ellipsis` for basic single-line truncation. Enhancements could include:
+   - Maximum line limits (e.g., 2 lines in month view, single line in week view)
+   - CSS `-webkit-line-clamp` for multi-line truncation with ellipsis
+   - JavaScript-based truncation with "..." suffix as fallback if CSS solution is insufficient
+
+2. **Event popup modal instead of direct link** - When an event is clicked in the calendar, display the event details in a popup modal box instead of navigating to the CBGroupJive event page. Implementation details:
+   - Use Bootstrap modal component (available in Joomla 5.x via `bootstrap.Modal`)
+   - Reuse the existing CBGroupJive event view layout for consistency with event list display
+   - Include a close button (×) in the top-right corner of the modal to dismiss it
+   - Modal should show: event title, date/time, location, description, and group name
+   - Optionally include a "View Full Event" link within the modal to navigate to the CBGroupJive group page (as event view is not currently supported by CB)
+   - Load event details via AJAX to avoid page reload
+   - Handle keyboard accessibility (Escape key to close, focus trapping)
+
+3. **Align event selection with CBGroupJive "All Events" view** - Replace the current event query logic with the same selection criteria used by the CBGroupJive Events plugin's "All Events" view. This ensures consistency between the calendar display and the standard events listing. Implementation details:
+   - Study the CBGroupJive Events plugin source code to identify the exact query logic used in the "All Events" view
+   - Replicate the filtering conditions, permissions checks, and visibility rules
+   - Ensure events shown in the calendar match exactly what users see in the "All Events" list
+   - This may include additional filters for event status, group visibility, user permissions, and date range handling
+
 ## Context and Orientation
 
 ### Repository Structure
