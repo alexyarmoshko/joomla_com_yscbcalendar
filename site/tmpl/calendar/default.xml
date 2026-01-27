@@ -6,7 +6,7 @@
     </layout>
 
     <fields name="params">
-        <fieldset name="basic" label="COM_YSCBCALENDAR_FIELDSET_BASIC">
+        <fieldset name="basic" label="COM_YSCBCALENDAR_FIELDSET_VIEW_OPTIONS">
             <field
                 name="default_view"
                 type="list"
