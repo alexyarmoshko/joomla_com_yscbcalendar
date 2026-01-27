@@ -91,14 +91,30 @@ The administrator will be able to configure component settings through the Jooml
      - Adding `min-width: 0` to `.yscbc-grid-cell` and `.yscbc-grid-cell-month`
    - Cells now maintain uniform widths in both week and month views
 
-2. **Event popup modal instead of direct link** - When an event is clicked in the calendar, display the event details in a popup modal box instead of navigating to the CBGroupJive event page. Implementation details:
-   - Use Bootstrap modal component (available in Joomla 5.x via `bootstrap.Modal`)
-   - Reuse the existing CBGroupJive event view layout for consistency with event list display
-   - Include a close button (×) in the top-right corner of the modal to dismiss it
-   - Modal should show: event title, date/time, location, description, and group name
-   - Optionally include a "View Full Event" link within the modal to navigate to the CBGroupJive group page (as event view is not currently supported by CB)
-   - Load event details via AJAX to avoid page reload
-   - Handle keyboard accessibility (Escape key to close, focus trapping)
+2. **[COMPLETED] Event popup modal instead of direct link** - When an event is clicked in the calendar, display the event details in a popup modal box instead of navigating to the CBGroupJive event page.
+   - **Implementation (2026-01-27):**
+     - Created `site/src/Controller/EventController.php` with `getEvent()` AJAX action for fetching event details
+     - Added `getEvent()` method to `CalendarModel` for single event retrieval with permission checks
+     - Updated `default.php` template to include Bootstrap modal HTML structure and AJAX URL with CSRF token
+     - Updated `default_week.php` and `default_month.php` to add `data-event-id` and `data-event-url` attributes to event links
+     - Extended `calendar.js` with modal functionality:
+       - `initEventModal()` - initializes Bootstrap modal and click handlers
+       - `showEventModal()` - fetches event data via AJAX and displays in modal
+       - `populateModalContent()` - fills modal header with event title, body with date/time, location, description, group name
+       - Automatic fallback to direct navigation if Bootstrap is unavailable
+     - Added modal CSS styles to `calendar.css`:
+       - Color bar matching event/group color
+       - Clean layout with icons for date, time, location, and group
+       - Loading spinner and error states
+       - Responsive design for mobile
+     - Added language strings for modal UI elements
+   - Features:
+     - Bootstrap modal with event title in header and close button (×)
+     - Shows: date/time, location (if set), description (as HTML), group name
+     - Loading spinner while fetching data
+     - Error handling with user-friendly messages
+     - Keyboard accessible (Escape to close, focus trapping handled by Bootstrap)
+     - CSRF token protection for AJAX requests
 
 3. **Align event selection with CBGroupJive "All Events" view** - Replace the current event query logic with the same selection criteria used by the CBGroupJive Events plugin's "All Events" view. This ensures consistency between the calendar display and the standard events listing. Implementation details:
    - Study the CBGroupJive Events plugin source code to identify the exact query logic used in the "All Events" view

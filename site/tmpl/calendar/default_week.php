@@ -44,10 +44,12 @@ $currentDay = clone $this->periodStart;
                     <div class="yscbc-no-events">&nbsp;</div>
                 <?php else : ?>
                     <?php foreach ($dayEvents as $event) : ?>
-                    <a href="<?php echo $this->escape($event->url); ?>"
+                    <a href="#"
                        class="yscbc-event"
                        style="background-color: <?php echo $this->escape($event->color); ?>;"
-                       title="<?php echo $this->escape($event->title); ?>">
+                       title="<?php echo $this->escape($event->title); ?>"
+                       data-event-id="<?php echo (int) $event->id; ?>"
+                       data-event-url="<?php echo $this->escape($event->url); ?>">
                         <span class="yscbc-event-time"><?php echo $this->formatTime($event->start_date); ?></span>
                         <span class="yscbc-event-title"><?php echo $this->escape($event->title); ?></span>
                     </a>
