@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+installation/*.zip
+
+# Temporary files
+*.tmp
+*.bak
+
+.vscode/

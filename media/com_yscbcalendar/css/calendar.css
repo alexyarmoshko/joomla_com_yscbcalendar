@@ -1,0 +1,348 @@
+/**
+ * YakShaverCB Calendar - Google Calendar-inspired styles
+ * (C) 2026 Yak Shaver https://www.kayakshaver.com All rights reserved.
+ */
+
+:root {
+    --yscbc-bg-color: #ffffff;
+    --yscbc-border-color: #dadce0;
+    --yscbc-today-bg: #e8f0fe;
+    --yscbc-today-number-bg: #1a73e8;
+    --yscbc-event-text: #ffffff;
+    --yscbc-header-text: #70757a;
+    --yscbc-text-color: #3c4043;
+    --yscbc-other-month-text: #80868b;
+    --yscbc-hover-bg: #f1f3f4;
+}
+
+/* Main container */
+.com-yscbc {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--yscbc-text-color);
+    background: var(--yscbc-bg-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header */
+.yscbc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--yscbc-border-color);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.yscbc-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.yscbc-today {
+    margin-right: 8px;
+}
+
+.yscbc-prev,
+.yscbc-next {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border-radius: 50%;
+}
+
+.yscbc-title {
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0;
+    color: var(--yscbc-text-color);
+}
+
+.yscbc-view-toggle .btn {
+    border-radius: 4px;
+}
+
+/* Grid - Common */
+.yscbc-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.yscbc-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--yscbc-border-color);
+}
+
+.yscbc-grid-header-cell {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--yscbc-header-text);
+    letter-spacing: 0.5px;
+}
+
+/* Week View Grid */
+.yscbc-week .yscbc-grid-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--yscbc-border-color);
+}
+
+.yscbc-grid-date-cell {
+    padding: 8px 4px;
+    text-align: center;
+}
+
+.yscbc-week .yscbc-grid-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    min-height: 400px;
+}
+
+.yscbc-grid-cell {
+    border-right: 1px solid var(--yscbc-border-color);
+    padding: 4px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.yscbc-grid-cell:last-child {
+    border-right: none;
+}
+
+.yscbc-grid-cell.is-today {
+    background-color: var(--yscbc-today-bg);
+}
+
+/* Month View Grid */
+.yscbc-grid-body-month {
+    display: flex;
+    flex-direction: column;
+}
+
+.yscbc-grid-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--yscbc-border-color);
+}
+
+.yscbc-grid-row:last-child {
+    border-bottom: none;
+}
+
+.yscbc-grid-cell-month {
+    border-right: 1px solid var(--yscbc-border-color);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.yscbc-grid-cell-month:last-child {
+    border-right: none;
+}
+
+.yscbc-grid-cell-month.is-today {
+    background-color: var(--yscbc-today-bg);
+}
+
+.yscbc-grid-cell-month.is-other-month {
+    background-color: #fafafa;
+}
+
+.yscbc-grid-cell-month.is-other-month .yscbc-date-number {
+    color: var(--yscbc-other-month-text);
+}
+
+.yscbc-cell-header {
+    padding: 4px 8px;
+    text-align: right;
+}
+
+.yscbc-cell-events {
+    flex: 1;
+    padding: 0 4px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+/* Date Numbers */
+.yscbc-date-number {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--yscbc-text-color);
+}
+
+.yscbc-date-number.is-today {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: var(--yscbc-today-number-bg);
+    color: #ffffff;
+    border-radius: 50%;
+}
+
+/* Events */
+.yscbc-event {
+    display: flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--yscbc-event-text);
+    text-decoration: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: opacity 0.15s ease;
+}
+
+.yscbc-event:hover {
+    opacity: 0.85;
+    text-decoration: none;
+    color: var(--yscbc-event-text);
+}
+
+.yscbc-event-time {
+    margin-right: 4px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.yscbc-event-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.yscbc-event-month {
+    padding: 1px 4px;
+    font-size: 11px;
+}
+
+.yscbc-event-month .yscbc-event-time {
+    display: none;
+}
+
+.yscbc-more-events {
+    font-size: 11px;
+    color: var(--yscbc-header-text);
+    padding: 2px 4px;
+    cursor: default;
+}
+
+.yscbc-no-events {
+    flex: 1;
+}
+
+/* Legend */
+.yscbc-legend {
+    padding: 16px 20px;
+    border-top: 1px solid var(--yscbc-border-color);
+}
+
+.yscbc-legend h4 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: var(--yscbc-header-text);
+}
+
+.yscbc-legend-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+}
+
+.yscbc-legend-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.yscbc-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.yscbc-legend-name {
+    font-size: 13px;
+    color: var(--yscbc-text-color);
+}
+
+/* Login message */
+.com-yscbc-login {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.com-yscbc-login .alert {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .yscbc-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .yscbc-title {
+        order: -1;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .yscbc-grid-header-cell {
+        font-size: 10px;
+        padding: 6px 2px;
+    }
+
+    .yscbc-grid-cell,
+    .yscbc-grid-cell-month {
+        min-height: 60px;
+    }
+
+    .yscbc-event {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+
+    .yscbc-event-time {
+        display: none;
+    }
+
+    .yscbc-date-number {
+        font-size: 12px;
+    }
+
+    .yscbc-date-number.is-today {
+        width: 24px;
+        height: 24px;
+    }
+
+    .yscbc-legend-list {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
