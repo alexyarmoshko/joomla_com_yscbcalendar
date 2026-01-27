@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_YSCBCALENDAR</name>
+    <author>Yak Shaver</author>
+    <creationDate>2026-01</creationDate>
+    <copyright>(C) 2026 Yak Shaver https://www.kayakshaver.com</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>me@kayakshaver.com</authorEmail>
+    <authorUrl>https://www.kayakshaver.com</authorUrl>
+    <version>1.0.0</version>
+    <description>COM_YSCBCALENDAR_DESCRIPTION</description>
+
+    <namespace path="src">Joomla\Component\YSCBCalendar</namespace>
+
+    <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+
+    <languages folder="site/language">
+        <language tag="en-GB">en-GB/com_yscbcalendar.ini</language>
+    </languages>
+
+    <media destination="com_yscbcalendar" folder="media/com_yscbcalendar">
+        <folder>css</folder>
+        <folder>js</folder>
+    </media>
+
+    <administration>
+        <files folder="admin">
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <folder>language</folder>
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+        </files>
+
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB/com_yscbcalendar.ini</language>
+            <language tag="en-GB">en-GB/com_yscbcalendar.sys.ini</language>
+        </languages>
+
+        <menu>COM_YSCBCALENDAR</menu>
+        <submenu>
+            <menu link="option=com_yscbcalendar">COM_YSCBCALENDAR_DASHBOARD</menu>
+        </submenu>
+    </administration>
+
+    <updateservers>
+        <server type="extension" name="YakShaver CB Calendar Updates">https://raw.githubusercontent.com/alexyarmoshko/joomla_com_yscbcalendar/main/yscbcalendar.update.xml</server>
+    </updateservers>
+</extension>

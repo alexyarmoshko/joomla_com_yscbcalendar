@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+    <update>
+        <name>YakShaver CB Calendar</name>
+        <description>Calendar component displaying CBGroupJive events for user's groups.</description>
+        <element>com_yscbcalendar</element>
+        <type>component</type>
+        <version>1.0.0</version>
+        <client>site</client>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/alexyarmoshko/joomla_com_yscbcalendar/releases/download/1.0.0/com_yscbcalendar-v1-0-0.zip</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <sha256>2090f99d7b46c8b916f6ebbf4ef091398043197bc4d8028a93067f03775ec5cc</sha256>
+        <targetplatform name="joomla" version="((5\.(0|1|2|3|4|5|6|7|8|9))|(6\.(0|1|2|3|4|5|6|7|8|9)))" />
+    </update>
+</updates>

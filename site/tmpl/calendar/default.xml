@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_YSCBCALENDAR_VIEW_CALENDAR_TITLE" option="COM_YSCBCALENDAR_VIEW_CALENDAR_OPTION">
+        <help key="JHELP_MENUS_MENU_ITEM_ARTICLE_CATEGORY_BLOG" />
+        <message><![CDATA[COM_YSCBCALENDAR_VIEW_CALENDAR_DESC]]></message>
+    </layout>
+
+    <fields name="params">
+        <fieldset name="basic" label="COM_YSCBCALENDAR_FIELDSET_BASIC">
+            <field
+                name="default_view"
+                type="list"
+                label="COM_YSCBCALENDAR_CONFIG_DEFAULT_VIEW"
+                description="COM_YSCBCALENDAR_CONFIG_DEFAULT_VIEW_DESC"
+                default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="week">COM_YSCBCALENDAR_VIEW_WEEK</option>
+                <option value="month">COM_YSCBCALENDAR_VIEW_MONTH</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>
