@@ -153,6 +153,14 @@
         modalEl.addEventListener('hidden.bs.modal', () => {
             resetModalContent();
         });
+
+        // Close modal when group link is clicked
+        modalEl.addEventListener('click', (event) => {
+            const groupLink = event.target.closest('.yscbc-modal-group-link');
+            if (groupLink && eventModal) {
+                eventModal.hide();
+            }
+        });
     };
 
     /**
@@ -299,9 +307,22 @@
         }
 
         // Set group
+        const groupRow = modalEl.querySelector('.yscbc-modal-group');
+        const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
-        if (groupText) {
-            groupText.textContent = eventData.group_name || '';
+        if (groupRow && groupLink && groupText) {
+            const groupName = eventData.group_name || '';
+            if (groupName) {
+                groupRow.style.display = 'flex';
+                groupText.textContent = groupName;
+                if (eventData.group_url) {
+                    groupLink.href = eventData.group_url;
+                } else {
+                    groupLink.removeAttribute('href');
+                }
+            } else {
+                groupRow.style.display = 'none';
+            }
         }
 
         // Set description (as HTML)
@@ -337,6 +358,7 @@
         const dateText = modalEl.querySelector('.yscbc-modal-date-text');
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
         const locationText = modalEl.querySelector('.yscbc-modal-location-text');
+        const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
         const description = modalEl.querySelector('.yscbc-modal-description');
 
@@ -344,6 +366,9 @@
         if (dateText) dateText.textContent = '';
         if (timeText) timeText.textContent = '';
         if (locationText) locationText.textContent = '';
+        if (groupLink) {
+            groupLink.removeAttribute('href');
+        }
         if (groupText) groupText.textContent = '';
         if (description) description.innerHTML = '';
     };

@@ -101,6 +101,7 @@ class CalendarModel extends BaseDatabaseModel
         foreach ($events as $event) {
             $event->color = $this->generateGroupColor((int) $event->group_id);
             $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
+            $event->group_url = $this->buildGroupUrl((int) $event->group_id);
             $event->start_date = new \DateTime($event->start);
             $event->end_date = new \DateTime($event->end);
         }
@@ -191,6 +192,25 @@ class CalendarModel extends BaseDatabaseModel
     }
 
     /**
+     * Build the URL to view a group in CBGroupJive.
+     *
+     * @param   int  $groupId  The group ID
+     *
+     * @return  string  The group URL
+     */
+    protected function buildGroupUrl(int $groupId): string
+    {
+        return Route::_(
+            'index.php?option=com_comprofiler'
+            . '&view=pluginclass'
+            . '&plugin=cbgroupjive'
+            . '&action=groups'
+            . '&func=show'
+            . '&id=' . $groupId
+        );
+    }
+
+    /**
      * Get a single event by ID for the current user.
      *
      * @param   int  $eventId  The event ID
@@ -252,6 +272,7 @@ class CalendarModel extends BaseDatabaseModel
         // Add color and URL to the event
         $event->color = $this->generateGroupColor((int) $event->group_id);
         $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
+        $event->group_url = $this->buildGroupUrl((int) $event->group_id);
         $event->start_date = new \DateTime($event->start);
         $event->end_date = new \DateTime($event->end);
 

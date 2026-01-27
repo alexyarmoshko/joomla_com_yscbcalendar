@@ -71,6 +71,7 @@ class EventController extends BaseController
             'end_time'    => $event->end_date->format($timeFormat),
             'group_id'    => (int) $event->group_id,
             'group_name'  => $event->group_name,
+            'group_url'   => $event->group_url ?? '',
             'color'       => $event->color,
             'url'         => $event->url,
             'same_day'    => $event->start_date->format('Y-m-d') === $event->end_date->format('Y-m-d'),
