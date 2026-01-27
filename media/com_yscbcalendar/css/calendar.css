@@ -76,7 +76,7 @@
 
 .yscbc-grid-header {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     border-bottom: 1px solid var(--yscbc-border-color);
 }
 
@@ -93,7 +93,7 @@
 /* Week View Grid */
 .yscbc-week .yscbc-grid-dates {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     border-bottom: 1px solid var(--yscbc-border-color);
 }
 
@@ -104,7 +104,7 @@
 
 .yscbc-week .yscbc-grid-body {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     min-height: 400px;
 }
 
@@ -115,6 +115,7 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
 }
 
 .yscbc-grid-cell:last-child {
@@ -133,7 +134,7 @@
 
 .yscbc-grid-row {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     border-bottom: 1px solid var(--yscbc-border-color);
 }
 
@@ -146,6 +147,7 @@
     min-height: 100px;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .yscbc-grid-cell-month:last-child {
@@ -206,8 +208,8 @@
     color: var(--yscbc-event-text);
     text-decoration: none;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    min-width: 0; /* Required for flex item text truncation */
+    max-width: 100%;
     transition: opacity 0.15s ease;
 }
 
@@ -225,9 +227,13 @@
 
 .yscbc-event-title {
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
+    min-width: 0; /* Required for flex item text truncation */
+    flex: 1;
 }
 
+/* Month view events - single line with ellipsis */
 .yscbc-event-month {
     padding: 1px 4px;
     font-size: 11px;
