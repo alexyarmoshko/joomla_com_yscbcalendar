@@ -191,6 +191,74 @@ class CalendarModel extends BaseDatabaseModel
     }
 
     /**
+     * Get a single event by ID for the current user.
+     *
+     * @param   int  $eventId  The event ID
+     *
+     * @return  object|null  The event object or null if not found/unauthorized
+     */
+    public function getEvent(int $eventId): ?object
+    {
+        $user = Factory::getApplication()->getIdentity();
+
+        if ($user === null || $user->guest) {
+            return null;
+        }
+
+        $userId = (int) $user->id;
+        $db = $this->getDatabase();
+
+        $query = $db->getQuery(true)
+            ->select([
+                $db->quoteName('e.id'),
+                $db->quoteName('e.title'),
+                $db->quoteName('e.event', 'description'),
+                $db->quoteName('e.location'),
+                $db->quoteName('e.address'),
+                $db->quoteName('e.start'),
+                $db->quoteName('e.end'),
+                $db->quoteName('g.id', 'group_id'),
+                $db->quoteName('g.name', 'group_name'),
+            ])
+            ->from($db->quoteName('#__groupjive_plugin_events', 'e'))
+            ->innerJoin(
+                $db->quoteName('#__groupjive_groups', 'g') . ' ON ' .
+                $db->quoteName('e.group') . ' = ' . $db->quoteName('g.id')
+            )
+            ->innerJoin(
+                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
+                $db->quoteName('g.id') . ' = ' . $db->quoteName('u.group')
+            )
+            ->where($db->quoteName('e.id') . ' = :eventId')
+            ->where($db->quoteName('u.user_id') . ' = :userId')
+            ->where($db->quoteName('u.status') . ' >= 1')
+            ->where($db->quoteName('e.published') . ' = 1')
+            ->where($db->quoteName('g.published') . ' = 1')
+            ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER)
+            ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+
+        $db->setQuery($query);
+
+        try {
+            $event = $db->loadObject();
+        } catch (\RuntimeException $e) {
+            return null;
+        }
+
+        if ($event === null) {
+            return null;
+        }
+
+        // Add color and URL to the event
+        $event->color = $this->generateGroupColor((int) $event->group_id);
+        $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
+        $event->start_date = new \DateTime($event->start);
+        $event->end_date = new \DateTime($event->end);
+
+        return $event;
+    }
+
+    /**
      * Get component parameters.
      *
      * @return  \Joomla\Registry\Registry

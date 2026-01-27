@@ -45,10 +45,12 @@ $weeks = (int) ceil($dayCount / 7);
                     </div>
                     <div class="yscbc-cell-events">
                         <?php foreach (array_slice($dayEvents, 0, 3) as $event) : ?>
-                        <a href="<?php echo $this->escape($event->url); ?>"
+                        <a href="#"
                            class="yscbc-event yscbc-event-month"
                            style="background-color: <?php echo $this->escape($event->color); ?>;"
-                           title="<?php echo $this->escape($event->title); ?>">
+                           title="<?php echo $this->escape($event->title); ?>"
+                           data-event-id="<?php echo (int) $event->id; ?>"
+                           data-event-url="<?php echo $this->escape($event->url); ?>">
                             <span class="yscbc-event-title"><?php echo $this->escape($event->title); ?></span>
                         </a>
                         <?php endforeach; ?>
