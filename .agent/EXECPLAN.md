@@ -38,6 +38,9 @@ The administrator will be able to configure component settings through the Jooml
 - **Observation:** Joomla 5.x component structure requires strict PSR-4 namespacing
   - **Evidence:** Namespace path must match folder structure exactly: `Joomla\Component\YSCBCalendar\Site` maps to `site/src/`
 
+- **Observation:** CSS grid columns can expand due to long event titles even with text truncation
+  - **Evidence:** `1fr` tracks honor min-content sizing; switching to `minmax(0, 1fr)` and setting `min-width: 0` on grid items keeps uniform column widths.
+
 ## Decision Log
 
 - **Decision:** Use frontend-only event retrieval without caching
@@ -77,10 +80,16 @@ The administrator will be able to configure component settings through the Jooml
 
 ### Future Improvements
 
-1. **Event title trimming for consistent cell sizes** - Event titles displayed in calendar cells should be trimmed to fit the cell dimensions, ensuring equal cell sizes regardless of event title length. When a title is visually trimmed, an ellipsis ("...") must be shown at the end to indicate truncation. The CSS already includes `text-overflow: ellipsis` for basic single-line truncation. Enhancements could include:
-   - Maximum line limits (e.g., 2 lines in month view, single line in week view)
-   - CSS `-webkit-line-clamp` for multi-line truncation with ellipsis
-   - JavaScript-based truncation with "..." suffix as fallback if CSS solution is insufficient
+1. **[COMPLETED] Event title trimming for consistent cell sizes** - Event titles displayed in calendar cells are trimmed to fit the cell dimensions, ensuring equal cell sizes regardless of event title length. When a title is visually trimmed, an ellipsis ("...") is shown at the end to indicate truncation.
+   - **Implementation (2026-01-27):** Updated CSS in `calendar.css` to properly support text truncation:
+     - Added `min-width: 0` to `.yscbc-event` and `.yscbc-event-title` (required for flex item text truncation)
+     - Added `max-width: 100%` to `.yscbc-event` to constrain width within cell
+     - Added `white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis` to `.yscbc-event-title`
+     - Added `flex: 1` to `.yscbc-event-title` to allow it to shrink and truncate properly
+   - **Fix (2026-01-27):** Prevented long titles from expanding grid columns by:
+     - Switching grid tracks to `repeat(7, minmax(0, 1fr))` in week/month headers and bodies
+     - Adding `min-width: 0` to `.yscbc-grid-cell` and `.yscbc-grid-cell-month`
+   - Cells now maintain uniform widths in both week and month views
 
 2. **Event popup modal instead of direct link** - When an event is clicked in the calendar, display the event details in a popup modal box instead of navigating to the CBGroupJive event page. Implementation details:
    - Use Bootstrap modal component (available in Joomla 5.x via `bootstrap.Modal`)
