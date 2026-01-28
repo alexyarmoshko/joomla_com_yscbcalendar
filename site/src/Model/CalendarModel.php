@@ -55,8 +55,9 @@ class CalendarModel extends BaseDatabaseModel
 
         $userId = (int) $user->id;
         $db = $this->getDatabase();
+        $isModerator = $this->isModerator($userId);
 
-        $query = $db->getQuery(true)
+        $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
                 $db->quoteName('e.id'),
                 $db->quoteName('e.title'),
@@ -68,25 +69,15 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('g.id', 'group_id'),
                 $db->quoteName('g.name', 'group_name'),
             ])
-            ->from($db->quoteName('#__groupjive_plugin_events', 'e'))
-            ->innerJoin(
-                $db->quoteName('#__groupjive_groups', 'g') . ' ON ' .
-                $db->quoteName('e.group') . ' = ' . $db->quoteName('g.id')
-            )
-            ->innerJoin(
-                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
-                $db->quoteName('g.id') . ' = ' . $db->quoteName('u.group')
-            )
-            ->where($db->quoteName('u.user_id') . ' = :userId')
-            ->where($db->quoteName('u.status') . ' >= 1')
-            ->where($db->quoteName('e.published') . ' = 1')
-            ->where($db->quoteName('g.published') . ' = 1')
             ->where($db->quoteName('e.start') . ' <= :endDate')
             ->where($db->quoteName('e.end') . ' >= :startDate')
-            ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER)
             ->bind(':startDate', $startDate->format('Y-m-d H:i:s'))
             ->bind(':endDate', $endDate->format('Y-m-d H:i:s'))
             ->order($db->quoteName('e.start') . ' ASC');
+
+        if (!$isModerator) {
+            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+        }
 
         $db->setQuery($query);
 
@@ -227,8 +218,9 @@ class CalendarModel extends BaseDatabaseModel
 
         $userId = (int) $user->id;
         $db = $this->getDatabase();
+        $isModerator = $this->isModerator($userId);
 
-        $query = $db->getQuery(true)
+        $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
                 $db->quoteName('e.id'),
                 $db->quoteName('e.title'),
@@ -240,22 +232,12 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('g.id', 'group_id'),
                 $db->quoteName('g.name', 'group_name'),
             ])
-            ->from($db->quoteName('#__groupjive_plugin_events', 'e'))
-            ->innerJoin(
-                $db->quoteName('#__groupjive_groups', 'g') . ' ON ' .
-                $db->quoteName('e.group') . ' = ' . $db->quoteName('g.id')
-            )
-            ->innerJoin(
-                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
-                $db->quoteName('g.id') . ' = ' . $db->quoteName('u.group')
-            )
             ->where($db->quoteName('e.id') . ' = :eventId')
-            ->where($db->quoteName('u.user_id') . ' = :userId')
-            ->where($db->quoteName('u.status') . ' >= 1')
-            ->where($db->quoteName('e.published') . ' = 1')
-            ->where($db->quoteName('g.published') . ' = 1')
-            ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER)
-            ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+            ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER);
+
+        if (!$isModerator) {
+            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+        }
 
         $db->setQuery($query);
 
@@ -287,5 +269,142 @@ class CalendarModel extends BaseDatabaseModel
     public function getParams(): \Joomla\Registry\Registry
     {
         return ComponentHelper::getParams('com_yscbcalendar');
+    }
+
+    /**
+     * Build the base event query with CBGroupJive "All Events" access rules.
+     *
+     * @param   int   $userId       The current user ID
+     * @param   bool  $isModerator  Whether the user is a CBGroupJive moderator
+     *
+     * @return  \Joomla\Database\DatabaseQuery
+     */
+    protected function buildBaseEventQuery(int $userId, bool $isModerator): \Joomla\Database\DatabaseQuery
+    {
+        $db = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->from($db->quoteName('#__groupjive_plugin_events', 'e'))
+            ->leftJoin(
+                $db->quoteName('#__groupjive_groups', 'g') . ' ON ' .
+                $db->quoteName('g.id') . ' = ' . $db->quoteName('e.group')
+            )
+            ->leftJoin(
+                $db->quoteName('#__groupjive_categories', 'c') . ' ON ' .
+                $db->quoteName('c.id') . ' = ' . $db->quoteName('g.category')
+            )
+            ->leftJoin(
+                $db->quoteName('#__comprofiler', 'cb') . ' ON ' .
+                $db->quoteName('cb.id') . ' = ' . $db->quoteName('e.user_id')
+            )
+            ->leftJoin(
+                $db->quoteName('#__users', 'j') . ' ON ' .
+                $db->quoteName('j.id') . ' = ' . $db->quoteName('e.user_id')
+            );
+
+        if (!$isModerator && $userId > 0) {
+            $query->leftJoin(
+                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
+                $db->quoteName('u.user_id') . ' = :userId' .
+                ' AND ' . $db->quoteName('u.group') . ' = ' . $db->quoteName('g.id') .
+                ' AND ' . $db->quoteName('u.status') . ' BETWEEN 0 AND 3'
+            );
+        }
+
+        $this->applyEventAccessFilters($query, $userId, $isModerator);
+
+        return $query;
+    }
+
+    /**
+     * Apply access rules from CBGroupJive "All Events" view to the query.
+     *
+     * @param   \Joomla\Database\DatabaseQuery  $query        The query to update
+     * @param   int                            $userId       The current user ID
+     * @param   bool                           $isModerator  Whether the user is a moderator
+     *
+     * @return  void
+     */
+    protected function applyEventAccessFilters(\Joomla\Database\DatabaseQuery $query, int $userId, bool $isModerator): void
+    {
+        $db = $this->getDatabase();
+
+        $query->where($db->quoteName('cb.approved') . ' = 1')
+            ->where($db->quoteName('cb.confirmed') . ' = 1')
+            ->where($db->quoteName('j.block') . ' = 0');
+
+        if ($isModerator) {
+            return;
+        }
+
+        $query->where(
+            '(' . $db->quoteName('e.user_id') . ' = :userId' .
+            ' OR ' . $db->quoteName('e.published') . ' = 1)'
+        );
+
+        if ($userId > 0) {
+            $query->where(
+                '(' . $db->quoteName('g.user_id') . ' = :userId' .
+                ' OR (' . $db->quoteName('g.published') . ' = 1' .
+                ' AND (' . $db->quoteName('g.type') . ' != 3' .
+                ' OR ' . $db->quoteName('u.id') . ' IS NOT NULL)))'
+            );
+        } else {
+            $query->where($db->quoteName('g.published') . ' = 1')
+                ->where($db->quoteName('g.type') . ' != 3');
+        }
+
+        $accessLevels = $this->getAccessLevels();
+        $accessList = implode(',', $accessLevels);
+        $categoryClause = '(' . $db->quoteName('c.published') . ' = 1' .
+            ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessList . '))';
+
+        if ($this->allowUncategorizedGroups()) {
+            $categoryClause = '(' . $categoryClause .
+                ' OR ' . $db->quoteName('g.category') . ' = 0)';
+        }
+
+        $query->where($categoryClause);
+    }
+
+    /**
+     * Get the view access levels for the current user.
+     *
+     * @return  array
+     */
+    protected function getAccessLevels(): array
+    {
+        $user = Factory::getApplication()->getIdentity();
+        $levels = $user ? $user->getAuthorisedViewLevels() : [];
+        $levels = array_values(array_unique(array_map('intval', $levels)));
+
+        return $levels ?: [1];
+    }
+
+    /**
+     * Determine if the current user is a CBGroupJive moderator.
+     *
+     * @param   int  $userId  The current user ID
+     *
+     * @return  bool
+     */
+    protected function isModerator(int $userId): bool
+    {
+        if ($userId <= 0) {
+            return false;
+        }
+
+        // Default to Joomla super users if CBGroupJive is not available.
+        $user = Factory::getApplication()->getIdentity();
+        return $user ? $user->authorise('core.admin') : false;
+    }
+
+    /**
+     * Check whether uncategorized groups should be included.
+     *
+     * @return  bool
+     */
+    protected function allowUncategorizedGroups(): bool
+    {
+        return true;
     }
 }
