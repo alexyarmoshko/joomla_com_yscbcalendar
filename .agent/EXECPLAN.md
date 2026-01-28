@@ -96,14 +96,15 @@ The administrator will be able to configure component settings through the Jooml
      - Created `site/src/Controller/EventController.php` with `getEvent()` AJAX action for fetching event details
      - Added `getEvent()` method to `CalendarModel` for single event retrieval with permission checks
      - Updated `default.php` template to include Bootstrap modal HTML structure and AJAX URL with CSRF token
-     - Updated `default_week.php` and `default_month.php` to add `data-event-id` and `data-event-url` attributes to event links
-     - Extended `calendar.js` with modal functionality:
-       - `initEventModal()` - initializes Bootstrap modal and click handlers
-       - `showEventModal()` - fetches event data via AJAX and displays in modal
-       - `populateModalContent()` - fills modal header with event title, body with date/time, location, description, group name
-       - Modal content aligned to CBGroupJive event markup (`gjGroupEvent*` classes) for shared styling
-       - Group name rendered as a link to the group page, opening in the parent window and closing the modal on click
-       - Automatic fallback to direct navigation if Bootstrap is unavailable
+      - Updated `default_week.php` and `default_month.php` to add `data-event-id` and `data-event-url` attributes to event links
+      - Extended `calendar.js` with modal functionality:
+        - `initEventModal()` - initializes Bootstrap modal and click handlers
+        - `showEventModal()` - fetches event data via AJAX and displays in modal
+        - `populateModalContent()` - fills modal header with event title, body with date/time, location, description, group name
+        - Modal content aligned to CBGroupJive event markup (`gjGroupEvent*` classes) for shared styling
+        - Status-specific markers and styling (pending/active/expired) should mirror `events.php` (`gjGroupEventExpired`, `gjGroupEventActive`, pending icon, and border classes)
+        - Group name rendered as a link to the group page, opening in the parent window and closing the modal on click
+        - Automatic fallback to direct navigation if Bootstrap is unavailable
      - Added modal CSS styles to `calendar.css`:
        - Color bar matching event/group color
        - Clean layout with icons for date, time, location, and group
@@ -111,8 +112,9 @@ The administrator will be able to configure component settings through the Jooml
        - Responsive design for mobile
      - Added language strings for modal UI elements
    - Features:
-     - Bootstrap modal with event title in header and close button (×)
+     - Bootstrap modal with event title and footer close button
      - Shows: date/time, location (if set), description (as HTML), group name (linked to group page)
+     - Status markers and styling match CBGroupJive event cards (pending icon, active/expired classes)
      - Loading spinner while fetching data
      - Error handling with user-friendly messages
      - Keyboard accessible (Escape to close, focus trapping handled by Bootstrap)

@@ -58,6 +58,16 @@ class EventController extends BaseController
         $params = $model->getParams();
         $timeFormat = $params->get('time_format', '24') === '12' ? 'g:i A' : 'H:i';
         $dateFormat = 'l, F j, Y';
+        $now = Factory::getDate();
+        $startDate = $event->start_date;
+        $endDate = $event->end_date ?? $startDate;
+        $status = 0;
+
+        if ($endDate < $now) {
+            $status = 1;
+        } elseif ($startDate <= $now && $endDate >= $now) {
+            $status = 2;
+        }
 
         $eventData = [
             'id'          => (int) $event->id,
@@ -74,6 +84,7 @@ class EventController extends BaseController
             'group_url'   => $event->group_url ?? '',
             'color'       => $event->color,
             'url'         => $event->url,
+            'status'      => $status,
             'same_day'    => $event->start_date->format('Y-m-d') === $event->end_date->format('Y-m-d'),
         ];
 
