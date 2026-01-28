@@ -67,7 +67,7 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header yscbc-modal-header">
-                <h5 class="modal-title" id="yscbcEventModalLabel"><?php echo Text::_('COM_YSCBCALENDAR_LOADING'); ?></h5>
+                <h5 class="modal-title visually-hidden" id="yscbcEventModalLabel"><?php echo Text::_('COM_YSCBCALENDAR_LOADING'); ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
             </div>
             <div class="modal-body yscbc-modal-body">
@@ -76,29 +76,34 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
                         <span class="visually-hidden"><?php echo Text::_('COM_YSCBCALENDAR_LOADING'); ?></span>
                     </div>
                 </div>
-                <div class="yscbc-modal-content" style="display: none;">
-                    <div class="yscbc-modal-color-bar"></div>
-                    <div class="yscbc-modal-meta">
-                        <div class="yscbc-modal-datetime">
-                            <span class="fa fa-calendar-o text-center gjGroupEventIcon"></span>
-                            <span class="yscbc-modal-date-text"></span>
+                <div class="yscbc-modal-content cb_template" style="display: none;">
+                    <div class="card gjGroupEventContainer yscbc-modal-card">
+                        <div class="card-header p-2 gjGroupEventHeader">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col text-large text-center text-md-left gjGroupEventTitle yscbc-modal-title-text"></div>
+                            </div>
                         </div>
-                        <div class="yscbc-modal-time">
-                            <span class="fa fa-clock-o text-center gjGroupEventIcon"></span>
-                            <span class="yscbc-modal-time-text"></span>
+                        <div class="card-body p-2 text-small gjGroupEventDetails">
+                            <div class="gjGroupEventDate">
+                                <span class="fa fa-clock-o text-center gjGroupEventIcon"></span>
+                                <span class="yscbc-modal-date-text"></span>
+                                <span class="yscbc-modal-time-text"></span>
+                            </div>
+                            <div class="gjGroupEventLocation" style="display: none;">
+                                <span class="fa fa-map-marker text-center gjGroupEventIcon"></span>
+                                <span class="yscbc-modal-location-text"></span>
+                            </div>
+                            <div class="gjGroupEventGroup" style="display: none;">
+                                <span class="fa fa-home text-center gjGroupEventIcon"></span>
+                                <a class="yscbc-modal-group-link" href="#" target="_parent" rel="noopener">
+                                    <span class="yscbc-modal-group-text"></span>
+                                </a>
+                            </div>
                         </div>
-                        <div class="yscbc-modal-location" style="display: none;">
-                            <span class="fa fa-map-marker text-center gjGroupEventIcon"></span>
-                            <span class="yscbc-modal-location-text"></span>
-                        </div>
-                        <div class="yscbc-modal-group">
-                            <span class="fa fa-home text-center gjGroupEventIcon"></span>
-                            <a class="yscbc-modal-group-link" href="#" target="_parent" rel="noopener">
-                                <span class="yscbc-modal-group-text"></span>
-                            </a>
+                        <div class="card-footer p-2 bg-transparent gjGroupEventDescription yscbc-modal-description-wrapper">
+                            <div class="yscbc-modal-description"></div>
                         </div>
                     </div>
-                    <div class="yscbc-modal-description"></div>
                 </div>
                 <div class="yscbc-modal-error" style="display: none;">
                     <div class="alert alert-danger" role="alert">

@@ -265,16 +265,20 @@
         if (error) error.style.display = 'none';
         if (content) content.style.display = 'block';
 
-        // Set modal header title
+        // Set modal title (screen reader) and visible title
         const modalTitle = modalEl.querySelector('#yscbcEventModalLabel');
+        const modalTitleVisible = modalEl.querySelector('.yscbc-modal-title-text');
         if (modalTitle) {
             modalTitle.textContent = eventData.title || '';
         }
+        if (modalTitleVisible) {
+            modalTitleVisible.textContent = eventData.title || '';
+        }
 
-        // Set color bar
-        const colorBar = modalEl.querySelector('.yscbc-modal-color-bar');
-        if (colorBar && eventData.color) {
-            colorBar.style.backgroundColor = eventData.color;
+        // Set card accent color
+        const modalCard = modalEl.querySelector('.yscbc-modal-card');
+        if (modalCard && eventData.color) {
+            modalCard.style.borderLeftColor = eventData.color;
         }
 
         // Set date
@@ -290,11 +294,14 @@
         // Set time
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
         if (timeText) {
-            timeText.textContent = `${eventData.start_time} - ${eventData.end_time}`;
+            const timeRange = (eventData.start_time && eventData.end_time)
+                ? `${eventData.start_time} - ${eventData.end_time}`
+                : '';
+            timeText.textContent = timeRange ? ` · ${timeRange}` : '';
         }
 
         // Set location (hide if empty)
-        const locationEl = modalEl.querySelector('.yscbc-modal-location');
+        const locationEl = modalEl.querySelector('.gjGroupEventLocation');
         const locationText = modalEl.querySelector('.yscbc-modal-location-text');
         if (locationEl && locationText) {
             const locationValue = eventData.location || eventData.address || '';
@@ -307,7 +314,7 @@
         }
 
         // Set group
-        const groupRow = modalEl.querySelector('.yscbc-modal-group');
+        const groupRow = modalEl.querySelector('.gjGroupEventGroup');
         const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
         if (groupRow && groupLink && groupText) {
@@ -327,13 +334,18 @@
 
         // Set description (as HTML)
         const description = modalEl.querySelector('.yscbc-modal-description');
+        const descriptionWrapper = modalEl.querySelector('.yscbc-modal-description-wrapper');
         if (description) {
             if (eventData.description) {
                 description.innerHTML = eventData.description;
-                description.style.display = 'block';
+                if (descriptionWrapper) {
+                    descriptionWrapper.style.display = 'block';
+                }
             } else {
                 description.innerHTML = '';
-                description.style.display = 'none';
+                if (descriptionWrapper) {
+                    descriptionWrapper.style.display = 'none';
+                }
             }
         }
     };
@@ -355,22 +367,34 @@
 
         // Clear content
         const modalTitle = modalEl.querySelector('#yscbcEventModalLabel');
+        const modalTitleVisible = modalEl.querySelector('.yscbc-modal-title-text');
         const dateText = modalEl.querySelector('.yscbc-modal-date-text');
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
         const locationText = modalEl.querySelector('.yscbc-modal-location-text');
         const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
         const description = modalEl.querySelector('.yscbc-modal-description');
+        const descriptionWrapper = modalEl.querySelector('.yscbc-modal-description-wrapper');
+        const locationEl = modalEl.querySelector('.gjGroupEventLocation');
+        const groupRow = modalEl.querySelector('.gjGroupEventGroup');
+        const modalCard = modalEl.querySelector('.yscbc-modal-card');
 
         if (modalTitle) modalTitle.textContent = '';
+        if (modalTitleVisible) modalTitleVisible.textContent = '';
         if (dateText) dateText.textContent = '';
         if (timeText) timeText.textContent = '';
         if (locationText) locationText.textContent = '';
+        if (locationEl) locationEl.style.display = 'none';
         if (groupLink) {
             groupLink.removeAttribute('href');
         }
         if (groupText) groupText.textContent = '';
+        if (groupRow) groupRow.style.display = 'none';
         if (description) description.innerHTML = '';
+        if (descriptionWrapper) descriptionWrapper.style.display = 'none';
+        if (modalCard) {
+            modalCard.style.borderLeftColor = '';
+        }
     };
 
     // Initialize when DOM is ready

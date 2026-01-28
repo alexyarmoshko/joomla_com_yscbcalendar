@@ -370,28 +370,24 @@
     min-height: 200px;
 }
 
-.yscbc-modal-color-bar {
-    height: 4px;
-    border-radius: 2px;
-    margin-bottom: 16px;
+.yscbc-modal-card {
+    border-left: 4px solid transparent;
 }
 
-.yscbc-modal-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-    color: var(--yscbc-header-text);
-}
-
-.yscbc-modal-datetime,
-.yscbc-modal-time,
-.yscbc-modal-location,
-.yscbc-modal-group {
+.yscbc-modal-content .gjGroupEventDate,
+.yscbc-modal-content .gjGroupEventLocation,
+.yscbc-modal-content .gjGroupEventGroup {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 14px;
+    color: var(--yscbc-header-text);
+}
+
+.yscbc-modal-content .gjGroupEventIcon {
+    width: 20px;
+    flex-shrink: 0;
+    color: var(--yscbc-header-text);
 }
 
 .yscbc-modal-group-link {
@@ -405,21 +401,10 @@
     text-decoration: underline;
 }
 
-.yscbc-modal-datetime svg,
-.yscbc-modal-time svg,
-.yscbc-modal-location svg,
-.yscbc-modal-group svg {
-    flex-shrink: 0;
-    color: var(--yscbc-header-text);
-}
-
 .yscbc-modal-description {
     font-size: 14px;
     line-height: 1.6;
     color: var(--yscbc-text-color);
-    border-top: 1px solid var(--yscbc-border-color);
-    padding-top: 16px;
-    margin-top: 8px;
 }
 
 .yscbc-modal-description p {
@@ -443,14 +428,9 @@
 
 /* Modal responsive */
 @media (max-width: 576px) {
-    .yscbc-modal-meta {
-        gap: 10px;
-    }
-
-    .yscbc-modal-datetime,
-    .yscbc-modal-time,
-    .yscbc-modal-location,
-    .yscbc-modal-group {
+    .yscbc-modal-content .gjGroupEventDate,
+    .yscbc-modal-content .gjGroupEventLocation,
+    .yscbc-modal-content .gjGroupEventGroup {
         font-size: 13px;
     }
 }

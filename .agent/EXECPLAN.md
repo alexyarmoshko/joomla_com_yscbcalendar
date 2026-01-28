@@ -101,8 +101,9 @@ The administrator will be able to configure component settings through the Jooml
        - `initEventModal()` - initializes Bootstrap modal and click handlers
        - `showEventModal()` - fetches event data via AJAX and displays in modal
        - `populateModalContent()` - fills modal header with event title, body with date/time, location, description, group name
+       - Modal content aligned to CBGroupJive event markup (`gjGroupEvent*` classes) for shared styling
        - Group name rendered as a link to the group page, opening in the parent window and closing the modal on click
-      - Automatic fallback to direct navigation if Bootstrap is unavailable
+       - Automatic fallback to direct navigation if Bootstrap is unavailable
      - Added modal CSS styles to `calendar.css`:
        - Color bar matching event/group color
        - Clean layout with icons for date, time, location, and group
