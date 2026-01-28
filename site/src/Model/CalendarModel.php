@@ -101,7 +101,7 @@ class CalendarModel extends BaseDatabaseModel
     }
 
     /**
-     * Get all groups the current user belongs to.
+     * Get all groups visible in CBGroupJive "All Groups" view.
      *
      * @return  array  Array of group objects with id, name, and color
      */
@@ -114,7 +114,9 @@ class CalendarModel extends BaseDatabaseModel
         }
 
         $userId = (int) $user->id;
+        $userEmail = (string) $user->email;
         $db = $this->getDatabase();
+        $isModerator = $this->isModerator($userId);
 
         $query = $db->getQuery(true)
             ->select([
@@ -122,15 +124,73 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('g.name'),
             ])
             ->from($db->quoteName('#__groupjive_groups', 'g'))
-            ->innerJoin(
-                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
-                $db->quoteName('g.id') . ' = ' . $db->quoteName('u.group')
+            ->leftJoin(
+                $db->quoteName('#__comprofiler', 'cb') . ' ON ' .
+                $db->quoteName('cb.id') . ' = ' . $db->quoteName('g.user_id')
             )
-            ->where($db->quoteName('u.user_id') . ' = :userId')
-            ->where($db->quoteName('u.status') . ' >= 1')
-            ->where($db->quoteName('g.published') . ' = 1')
-            ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER)
+            ->leftJoin(
+                $db->quoteName('#__users', 'j') . ' ON ' .
+                $db->quoteName('j.id') . ' = ' . $db->quoteName('g.user_id')
+            )
+            ->leftJoin(
+                $db->quoteName('#__groupjive_categories', 'c') . ' ON ' .
+                $db->quoteName('c.id') . ' = ' . $db->quoteName('g.category')
+            )
             ->order($db->quoteName('g.name') . ' ASC');
+
+        if (!$isModerator && $userId > 0) {
+            $query->leftJoin(
+                $db->quoteName('#__groupjive_users', 'u') . ' ON ' .
+                $db->quoteName('u.user_id') . ' = :userId' .
+                ' AND ' . $db->quoteName('u.group') . ' = ' . $db->quoteName('g.id') .
+                ' AND ' . $db->quoteName('u.status') . ' BETWEEN 0 AND 3'
+            );
+        }
+
+        if ($userId > 0) {
+            $query->leftJoin(
+                $db->quoteName('#__groupjive_invites', 'i') . ' ON ' .
+                $db->quoteName('i.group') . ' = ' . $db->quoteName('g.id') .
+                ' AND ' . $db->quoteName('i.accepted') . ' IS NULL' .
+                ' AND (' . $db->quoteName('i.email') . ' = ' . $db->quote($userEmail) .
+                ' OR ' . $db->quoteName('i.user') . ' = ' . (int) $userId . ')'
+            );
+        }
+
+        $query->where($db->quoteName('cb.approved') . ' = 1')
+            ->where($db->quoteName('cb.confirmed') . ' = 1')
+            ->where($db->quoteName('j.block') . ' = 0');
+
+        if (!$isModerator) {
+            if ($userId > 0) {
+                $query->where(
+                    '(' . $db->quoteName('g.user_id') . ' = :userId' .
+                    ' OR (' . $db->quoteName('g.published') . ' = 1' .
+                    ' AND (' . $db->quoteName('g.type') . ' != 3' .
+                    ' OR ' . $db->quoteName('u.id') . ' IS NOT NULL' .
+                    ' OR ' . $db->quoteName('i.id') . ' IS NOT NULL)))'
+                );
+            } else {
+                $query->where($db->quoteName('g.published') . ' = 1')
+                    ->where($db->quoteName('g.type') . ' != 3');
+            }
+
+            $accessLevels = $this->getAccessLevels();
+            $accessList = implode(',', $accessLevels);
+            $categoryClause = '(' . $db->quoteName('c.published') . ' = 1' .
+                ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessList . '))';
+
+            if ($this->allowUncategorizedGroups()) {
+                $categoryClause = '(' . $categoryClause .
+                    ' OR ' . $db->quoteName('g.category') . ' = 0)';
+            }
+
+            $query->where($categoryClause);
+        }
+
+        if (!$isModerator) {
+            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+        }
 
         $db->setQuery($query);
 

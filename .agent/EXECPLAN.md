@@ -67,6 +67,10 @@ The administrator will be able to configure component settings through the Jooml
   - **Rationale:** Avoids hard dependency on CB runtime while still granting broader access to super users
   - **Date/Author:** 2026-01-28 / Implementation
 
+- **Decision:** Use CBGroupJive "all groups" visibility rules for legend color sources
+  - **Rationale:** Keeps group colors consistent even when events are visible outside direct memberships
+  - **Date/Author:** 2026-01-28 / Implementation
+
 ## Outcomes & Retrospective
 
 ### Implementation Complete (2026-01-27)
@@ -138,6 +142,8 @@ The administrator will be able to configure component settings through the Jooml
      - Added category access checks based on Joomla view levels and included uncategorized groups by default
      - Preserved date range filtering while widening group visibility to match CBGroupJive rules
      - Applied the same access filters to `getEvent()` for modal requests
+   - **Extension (2026-01-28):**
+     - Updated group legend data to use the same access rules as `groups/allgroups`, so color assignments are based on all visible groups, not only memberships
 
 ## Context and Orientation
 
@@ -791,4 +797,4 @@ clean:
 
 **Revision Note (2026-01-27):** Added Milestone 9 for packaging and distribution. Includes Makefile for automated ZIP packaging with versioned filenames in `installation/` folder, and `yscbcalendar.update.xml` for Joomla update server support. Pattern based on existing modules `mod_ystides` and `mod_yscbsubs_expiredlist`.
 
-**Revision Note (2026-01-28):** Implemented improvement 3 to align calendar event selection with CBGroupJive "All Events" access rules and documented the access-filtering decisions.
+**Revision Note (2026-01-28):** Implemented improvement 3 to align calendar event selection with CBGroupJive "All Events" access rules, and extended group legend color sources to `groups/allgroups` visibility.
