@@ -32,6 +32,7 @@ The administrator will be able to configure component settings through the Jooml
 - [x] (2026-01-28) Improvement 3: Align calendar event selection with CBGroupJive "All Events" view criteria
 - [x] (2026-01-28) Improvement 4: Move previous/next buttons to flank the calendar title
 - [x] (2026-01-28) Improvement 5: Treat missing event end dates as start dates
+- [x] (2026-01-28) Improvement 6: Avoid MySQL strict errors for NULL/zero event end dates
 
 ## Surprises & Discoveries
 
@@ -49,6 +50,9 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Observation:** Some CBGroupJive events have an empty end date
   - **Evidence:** Events with only `start` populated can appear in the calendar data; treating `end` as `start` prevents them from being filtered out or causing date parsing issues.
+
+- **Observation:** MySQL strict mode errors on DATETIME comparison with empty string literals
+  - **Evidence:** Production MySQL raised `1525 Incorrect DATETIME value: ''` when the query used `NULLIF(e.end, '')` on DATETIME columns.
 
 ## Decision Log
 
@@ -78,6 +82,10 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Decision:** Treat missing/empty event end dates as the same value as start
   - **Rationale:** Ensures single-date events are displayed consistently and remain within range filtering
+  - **Date/Author:** 2026-01-28 / Implementation
+
+- **Decision:** Remove empty-string DATETIME comparisons in SQL filters
+  - **Rationale:** MySQL strict mode rejects `''` as DATETIME; NULL/zero dates are handled safely via `NULLIF(e.end, '0000-00-00 00:00:00')`
   - **Date/Author:** 2026-01-28 / Implementation
 
 ## Outcomes & Retrospective
@@ -163,6 +171,10 @@ The administrator will be able to configure component settings through the Jooml
    - **Implementation (2026-01-28):**
      - Updated `CalendarModel` range filtering to use an effective end date expression that falls back to the start date when `end` is empty
      - Hydrated event objects with `end_date` equal to `start_date` when `end` is blank or `0000-00-00 00:00:00`
+
+6. **[COMPLETED] Avoid MySQL strict errors for NULL/zero end dates** - Ensure SQL range filtering does not compare DATETIME columns to empty string literals.
+   - **Implementation (2026-01-28):**
+     - Replaced `NULLIF(e.end, '')` usage with a zero-date-only `NULLIF` expression to keep MySQL strict mode happy
 
 ## Context and Orientation
 
@@ -823,3 +835,5 @@ clean:
 **Revision Note (2026-01-28):** Implemented improvement 4 by updating the header markup and styles to flank the title with navigation arrows.
 
 **Revision Note (2026-01-28):** Implemented improvement 5 to treat empty event end dates as start dates in filtering and hydration.
+
+**Revision Note (2026-01-28):** Implemented improvement 6 to avoid MySQL strict mode errors in the event range filter.
