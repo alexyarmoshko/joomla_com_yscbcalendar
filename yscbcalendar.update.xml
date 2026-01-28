@@ -2,7 +2,7 @@
 <updates>
     <update>
         <name>YakShaver CB Calendar</name>
-        <description>Calendar component displaying CBGroupJive events for user's groups.</description>
+        <description>Calendar component displaying CBGroupJive events that the user has access to.</description>
         <element>com_yscbcalendar</element>
         <type>component</type>
         <version>1.0.0</version>
