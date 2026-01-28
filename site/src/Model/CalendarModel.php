@@ -58,7 +58,8 @@ class CalendarModel extends BaseDatabaseModel
         $isModerator = $this->isModerator($userId);
         $startField = $db->quoteName('e.start');
         $endField = $db->quoteName('e.end');
-        $effectiveEndField = 'COALESCE(NULLIF(' . $endField . ", '0000-00-00 00:00:00'), NULLIF(" . $endField . ", ''), " . $startField . ')';
+        $normalizedEndField = 'NULLIF(' . $endField . ", '0000-00-00 00:00:00')";
+        $effectiveEndField = 'COALESCE(' . $normalizedEndField . ', ' . $startField . ')';
 
         $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
