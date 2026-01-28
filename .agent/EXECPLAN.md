@@ -29,6 +29,7 @@ The administrator will be able to configure component settings through the Jooml
 - [x] (2026-01-27) Milestone 7: CSS styling (Google Calendar-like appearance)
 - [ ] Milestone 8: Integration testing and validation (requires deployment to Joomla)
 - [x] (2026-01-27) Milestone 9: Packaging and distribution (Makefile, update XML)
+- [x] (2026-01-28) Improvement 3: Align calendar event selection with CBGroupJive "All Events" view criteria
 
 ## Surprises & Discoveries
 
@@ -40,6 +41,9 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Observation:** CSS grid columns can expand due to long event titles even with text truncation
   - **Evidence:** `1fr` tracks honor min-content sizing; switching to `minmax(0, 1fr)` and setting `min-width: 0` on grid items keeps uniform column widths.
+
+- **Observation:** CBGroupJive "All Events" view filters by CB user approval/confirmation and group category access
+  - **Evidence:** `component.cbgroupjiveevents.php` applies `cb.approved = 1`, `cb.confirmed = 1`, `j.block = 0`, and category access checks even for event owners.
 
 ## Decision Log
 
@@ -54,6 +58,14 @@ The administrator will be able to configure component settings through the Jooml
 - **Decision:** Use Joomla Web Asset Manager for CSS/JS
   - **Rationale:** Follows Joomla 5.x best practices; allows template overrides
   - **Date/Author:** 2026-01-27 / Initial planning
+
+- **Decision:** Implement CBGroupJive "All Events" access rules directly in `CalendarModel` with SQL joins and filters
+  - **Rationale:** Keeps calendar selection consistent with CBGroupJive without requiring CB plugin runtime globals
+  - **Date/Author:** 2026-01-28 / Implementation
+
+- **Decision:** Treat CBGroupJive moderator check as Joomla `core.admin` fallback
+  - **Rationale:** Avoids hard dependency on CB runtime while still granting broader access to super users
+  - **Date/Author:** 2026-01-28 / Implementation
 
 ## Outcomes & Retrospective
 
@@ -120,11 +132,12 @@ The administrator will be able to configure component settings through the Jooml
      - Keyboard accessible (Escape to close, focus trapping handled by Bootstrap)
      - CSRF token protection for AJAX requests
 
-3. **Align event selection with CBGroupJive "All Events" view** - Replace the current event query logic with the same selection criteria used by the CBGroupJive Events plugin's "All Events" view. This ensures consistency between the calendar display and the standard events listing. Implementation details:
-   - Study the CBGroupJive Events plugin source code to identify the exact query logic used in the "All Events" view
-   - Replicate the filtering conditions, permissions checks, and visibility rules
-   - Ensure events shown in the calendar match exactly what users see in the "All Events" list
-   - This may include additional filters for event status, group visibility, user permissions, and date range handling
+3. **[COMPLETED] Align event selection with CBGroupJive "All Events" view** - Replace the current event query logic with the same selection criteria used by the CBGroupJive Events plugin's "All Events" view. This ensures consistency between the calendar display and the standard events listing.
+   - **Implementation (2026-01-28):**
+     - Updated `CalendarModel` queries to use CBGroupJive "All Events" filters (group/category access, user approval/confirmed, user block checks, and published vs. owner access)
+     - Added category access checks based on Joomla view levels and included uncategorized groups by default
+     - Preserved date range filtering while widening group visibility to match CBGroupJive rules
+     - Applied the same access filters to `getEvent()` for modal requests
 
 ## Context and Orientation
 
@@ -777,3 +790,5 @@ clean:
 **Revision Note (2026-01-27):** Initial plan created based on requirements analysis. Includes frontend+backend structure, color-coded events by group, and event linking to CBGroupJive pages.
 
 **Revision Note (2026-01-27):** Added Milestone 9 for packaging and distribution. Includes Makefile for automated ZIP packaging with versioned filenames in `installation/` folder, and `yscbcalendar.update.xml` for Joomla update server support. Pattern based on existing modules `mod_ystides` and `mod_yscbsubs_expiredlist`.
+
+**Revision Note (2026-01-28):** Implemented improvement 3 to align calendar event selection with CBGroupJive "All Events" access rules and documented the access-filtering decisions.
