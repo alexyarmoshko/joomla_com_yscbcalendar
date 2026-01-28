@@ -30,6 +30,7 @@ The administrator will be able to configure component settings through the Jooml
 - [ ] Milestone 8: Integration testing and validation (requires deployment to Joomla)
 - [x] (2026-01-27) Milestone 9: Packaging and distribution (Makefile, update XML)
 - [x] (2026-01-28) Improvement 3: Align calendar event selection with CBGroupJive "All Events" view criteria
+- [x] (2026-01-28) Improvement 4: Move previous/next buttons to flank the calendar title
 
 ## Surprises & Discoveries
 
@@ -144,6 +145,11 @@ The administrator will be able to configure component settings through the Jooml
      - Applied the same access filters to `getEvent()` for modal requests
    - **Extension (2026-01-28):**
      - Updated group legend data to use the same access rules as `groups/allgroups`, so color assignments are based on all visible groups, not only memberships
+
+4. **Move prev/next buttons to flank the title** - Relocate the navigation arrows so the previous button sits to the left of the `<h2 class="yscbc-title">` and the next button sits to the right, matching the requested header layout.
+   - **Implementation (2026-01-28):**
+     - Moved prev/next links into a new `yscbc-title-nav` wrapper flanking the title
+     - Adjusted header CSS to center the title group and keep arrows adjacent on mobile and desktop
 
 ## Context and Orientation
 
@@ -798,3 +804,7 @@ clean:
 **Revision Note (2026-01-27):** Added Milestone 9 for packaging and distribution. Includes Makefile for automated ZIP packaging with versioned filenames in `installation/` folder, and `yscbcalendar.update.xml` for Joomla update server support. Pattern based on existing modules `mod_ystides` and `mod_yscbsubs_expiredlist`.
 
 **Revision Note (2026-01-28):** Implemented improvement 3 to align calendar event selection with CBGroupJive "All Events" access rules, and extended group legend color sources to `groups/allgroups` visibility.
+
+**Revision Note (2026-01-28):** Added improvement 4 to move navigation arrows to the left and right of the calendar title, per request.
+
+**Revision Note (2026-01-28):** Implemented improvement 4 by updating the header markup and styles to flank the title with navigation arrows.

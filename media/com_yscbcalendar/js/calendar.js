@@ -278,7 +278,7 @@
         // Set card accent color
         const modalCard = modalEl.querySelector('.yscbc-modal-card');
         if (modalCard && eventData.color) {
-            modalCard.style.borderLeftColor = eventData.color;
+            modalCard.style.borderColor = eventData.color;
         }
 
         // Apply status styling to match CBGroupJive events
