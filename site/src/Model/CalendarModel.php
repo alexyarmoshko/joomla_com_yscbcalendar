@@ -56,6 +56,9 @@ class CalendarModel extends BaseDatabaseModel
         $userId = (int) $user->id;
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
+        $startField = $db->quoteName('e.start');
+        $endField = $db->quoteName('e.end');
+        $effectiveEndField = 'COALESCE(NULLIF(' . $endField . ", '0000-00-00 00:00:00'), NULLIF(" . $endField . ", ''), " . $startField . ')';
 
         $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
@@ -69,11 +72,11 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('g.id', 'group_id'),
                 $db->quoteName('g.name', 'group_name'),
             ])
-            ->where($db->quoteName('e.start') . ' <= :endDate')
-            ->where($db->quoteName('e.end') . ' >= :startDate')
+            ->where($startField . ' <= :endDate')
+            ->where($effectiveEndField . ' >= :startDate')
             ->bind(':startDate', $startDate->format('Y-m-d H:i:s'))
             ->bind(':endDate', $endDate->format('Y-m-d H:i:s'))
-            ->order($db->quoteName('e.start') . ' ASC');
+            ->order($startField . ' ASC');
 
         if (!$isModerator) {
             $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
@@ -93,8 +96,7 @@ class CalendarModel extends BaseDatabaseModel
             $event->color = $this->generateGroupColor((int) $event->group_id);
             $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
             $event->group_url = $this->buildGroupUrl((int) $event->group_id);
-            $event->start_date = new \DateTime($event->start);
-            $event->end_date = new \DateTime($event->end);
+            $this->hydrateEventDates($event);
         }
 
         return $events;
@@ -315,8 +317,7 @@ class CalendarModel extends BaseDatabaseModel
         $event->color = $this->generateGroupColor((int) $event->group_id);
         $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
         $event->group_url = $this->buildGroupUrl((int) $event->group_id);
-        $event->start_date = new \DateTime($event->start);
-        $event->end_date = new \DateTime($event->end);
+        $this->hydrateEventDates($event);
 
         return $event;
     }
@@ -329,6 +330,38 @@ class CalendarModel extends BaseDatabaseModel
     public function getParams(): \Joomla\Registry\Registry
     {
         return ComponentHelper::getParams('com_yscbcalendar');
+    }
+
+    /**
+     * Ensure event date values are hydrated with a fallback for empty end values.
+     *
+     * @param   object  $event  The event object to hydrate
+     *
+     * @return  void
+     */
+    protected function hydrateEventDates(object $event): void
+    {
+        $event->start_date = new \DateTime($event->start);
+        $event->end_date = $this->resolveEventEndDate($event->end ?? '', $event->start_date);
+    }
+
+    /**
+     * Resolve the event end date, falling back to the start date when missing.
+     *
+     * @param   string     $endValue   Raw end date value from storage
+     * @param   \DateTime  $startDate  Parsed start date
+     *
+     * @return  \DateTime
+     */
+    protected function resolveEventEndDate(string $endValue, \DateTime $startDate): \DateTime
+    {
+        $endValue = trim($endValue);
+
+        if ($endValue === '' || $endValue === '0000-00-00 00:00:00') {
+            return clone $startDate;
+        }
+
+        return new \DateTime($endValue);
     }
 
     /**

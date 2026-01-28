@@ -295,19 +295,30 @@
         // Set date
         const dateText = modalEl.querySelector('.yscbc-modal-date-text');
         if (dateText) {
-            if (eventData.same_day) {
-                dateText.textContent = eventData.start_date;
+            const startDate = eventData.start_date || '';
+            const endDate = eventData.end_date || '';
+            const sameDay = Boolean(eventData.same_day) || (startDate && startDate === endDate);
+
+            if (sameDay) {
+                dateText.textContent = startDate;
             } else {
-                dateText.textContent = `${eventData.start_date} - ${eventData.end_date}`;
+                dateText.textContent = `${startDate} - ${endDate}`;
             }
         }
 
         // Set time
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
         if (timeText) {
-            const timeRange = (eventData.start_time && eventData.end_time)
-                ? `${eventData.start_time} - ${eventData.end_time}`
-                : '';
+            const startTime = eventData.start_time || '';
+            const endTime = eventData.end_time || '';
+            let timeRange = '';
+
+            if (startTime && endTime) {
+                timeRange = startTime === endTime ? startTime : `${startTime} - ${endTime}`;
+            } else if (startTime) {
+                timeRange = startTime;
+            }
+
             timeText.textContent = timeRange ? ` · ${timeRange}` : '';
         }
 
