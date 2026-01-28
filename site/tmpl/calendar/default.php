@@ -19,15 +19,17 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
             <a href="<?php echo $this->escape($this->getTodayUrl()); ?>" class="btn btn-outline-primary btn-sm yscbc-today">
                 <?php echo Text::_('COM_YSCBCALENDAR_TODAY'); ?>
             </a>
-            <a href="<?php echo $this->escape($this->getPrevUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-prev" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_PREVIOUS'); ?>">
-                <span aria-hidden="true">&lsaquo;</span>
-            </a>
-            <a href="<?php echo $this->escape($this->getNextUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-next" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_NEXT'); ?>">
-                <span aria-hidden="true">&rsaquo;</span>
-            </a>
         </div>
 
-        <h2 class="yscbc-title"><?php echo $this->escape($this->getPeriodTitle()); ?></h2>
+        <div class="yscbc-title-nav" role="group">
+            <a href="<?php echo $this->escape($this->getPrevUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-prev" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_PREVIOUS'); ?>">
+                <span class="fa fa-angle-left" aria-hidden="true"></span>
+            </a>
+            <h2 class="yscbc-title"><?php echo $this->escape($this->getPeriodTitle()); ?></h2>
+            <a href="<?php echo $this->escape($this->getNextUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-next" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_NEXT'); ?>">
+                <span class="fa fa-angle-right" aria-hidden="true"></span>
+            </a>
+        </div>
 
         <div class="yscbc-view-toggle btn-group" role="group" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_VIEW_MODE'); ?>">
             <a href="<?php echo $this->escape($this->getViewModeUrl('week')); ?>"
