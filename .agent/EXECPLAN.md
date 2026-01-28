@@ -31,6 +31,7 @@ The administrator will be able to configure component settings through the Jooml
 - [x] (2026-01-27) Milestone 9: Packaging and distribution (Makefile, update XML)
 - [x] (2026-01-28) Improvement 3: Align calendar event selection with CBGroupJive "All Events" view criteria
 - [x] (2026-01-28) Improvement 4: Move previous/next buttons to flank the calendar title
+- [x] (2026-01-28) Improvement 5: Treat missing event end dates as start dates
 
 ## Surprises & Discoveries
 
@@ -45,6 +46,9 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Observation:** CBGroupJive "All Events" view filters by CB user approval/confirmation and group category access
   - **Evidence:** `component.cbgroupjiveevents.php` applies `cb.approved = 1`, `cb.confirmed = 1`, `j.block = 0`, and category access checks even for event owners.
+
+- **Observation:** Some CBGroupJive events have an empty end date
+  - **Evidence:** Events with only `start` populated can appear in the calendar data; treating `end` as `start` prevents them from being filtered out or causing date parsing issues.
 
 ## Decision Log
 
@@ -70,6 +74,10 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Decision:** Use CBGroupJive "all groups" visibility rules for legend color sources
   - **Rationale:** Keeps group colors consistent even when events are visible outside direct memberships
+  - **Date/Author:** 2026-01-28 / Implementation
+
+- **Decision:** Treat missing/empty event end dates as the same value as start
+  - **Rationale:** Ensures single-date events are displayed consistently and remain within range filtering
   - **Date/Author:** 2026-01-28 / Implementation
 
 ## Outcomes & Retrospective
@@ -150,6 +158,11 @@ The administrator will be able to configure component settings through the Jooml
    - **Implementation (2026-01-28):**
      - Moved prev/next links into a new `yscbc-title-nav` wrapper flanking the title
      - Adjusted header CSS to center the title group and keep arrows adjacent on mobile and desktop
+
+5. **[COMPLETED] Normalize empty event end dates** - Events with an empty `end` value should be treated as single-day events where `end` equals `start`.
+   - **Implementation (2026-01-28):**
+     - Updated `CalendarModel` range filtering to use an effective end date expression that falls back to the start date when `end` is empty
+     - Hydrated event objects with `end_date` equal to `start_date` when `end` is blank or `0000-00-00 00:00:00`
 
 ## Context and Orientation
 
@@ -808,3 +821,5 @@ clean:
 **Revision Note (2026-01-28):** Added improvement 4 to move navigation arrows to the left and right of the calendar title, per request.
 
 **Revision Note (2026-01-28):** Implemented improvement 4 by updating the header markup and styles to flank the title with navigation arrows.
+
+**Revision Note (2026-01-28):** Implemented improvement 5 to treat empty event end dates as start dates in filtering and hydration.
