@@ -281,6 +281,17 @@
             modalCard.style.borderLeftColor = eventData.color;
         }
 
+        // Apply status styling to match CBGroupJive events
+        const statusValue = Number(eventData.status || 0);
+        if (modalCard) {
+            modalCard.classList.remove('gjGroupEventExpired', 'gjGroupEventActive', 'border-warning', 'border-primary');
+            if (statusValue === 1) {
+                modalCard.classList.add('gjGroupEventExpired', 'border-warning');
+            } else if (statusValue === 2) {
+                modalCard.classList.add('gjGroupEventActive', 'border-primary');
+            }
+        }
+
         // Set date
         const dateText = modalEl.querySelector('.yscbc-modal-date-text');
         if (dateText) {
@@ -298,6 +309,22 @@
                 ? `${eventData.start_time} - ${eventData.end_time}`
                 : '';
             timeText.textContent = timeRange ? ` · ${timeRange}` : '';
+        }
+
+        // Set status marker (ended/now)
+        const statusText = modalEl.querySelector('.yscbc-modal-status');
+        if (statusText) {
+            const statusEndedLabel = modalEl.dataset.statusEnded || '';
+            const statusNowLabel = modalEl.dataset.statusNow || '';
+            statusText.textContent = '';
+            statusText.classList.remove('text-warning', 'text-primary');
+            if (statusValue === 1 && statusEndedLabel) {
+                statusText.textContent = ` · ${statusEndedLabel}`;
+                statusText.classList.add('text-warning');
+            } else if (statusValue === 2 && statusNowLabel) {
+                statusText.textContent = ` · ${statusNowLabel}`;
+                statusText.classList.add('text-primary');
+            }
         }
 
         // Set location (hide if empty)
@@ -370,6 +397,7 @@
         const modalTitleVisible = modalEl.querySelector('.yscbc-modal-title-text');
         const dateText = modalEl.querySelector('.yscbc-modal-date-text');
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
+        const statusText = modalEl.querySelector('.yscbc-modal-status');
         const locationText = modalEl.querySelector('.yscbc-modal-location-text');
         const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
@@ -383,6 +411,10 @@
         if (modalTitleVisible) modalTitleVisible.textContent = '';
         if (dateText) dateText.textContent = '';
         if (timeText) timeText.textContent = '';
+        if (statusText) {
+            statusText.textContent = '';
+            statusText.classList.remove('text-warning', 'text-primary');
+        }
         if (locationText) locationText.textContent = '';
         if (locationEl) locationEl.style.display = 'none';
         if (groupLink) {
@@ -394,6 +426,7 @@
         if (descriptionWrapper) descriptionWrapper.style.display = 'none';
         if (modalCard) {
             modalCard.style.borderLeftColor = '';
+            modalCard.classList.remove('gjGroupEventExpired', 'gjGroupEventActive', 'border-warning', 'border-primary');
         }
     };
 

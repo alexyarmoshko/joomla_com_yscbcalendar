@@ -63,12 +63,11 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
 </div>
 
 <!-- Event Modal -->
-<div class="modal fade" id="yscbcEventModal" tabindex="-1" aria-labelledby="yscbcEventModalLabel" aria-hidden="true">
+<div class="modal fade" id="yscbcEventModal" tabindex="-1" aria-labelledby="yscbcEventModalLabel" aria-hidden="true" data-status-ended="<?php echo Text::_('COM_YSCBCALENDAR_STATUS_ENDED'); ?>" data-status-now="<?php echo Text::_('COM_YSCBCALENDAR_STATUS_NOW'); ?>">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header yscbc-modal-header">
                 <h5 class="modal-title visually-hidden" id="yscbcEventModalLabel"><?php echo Text::_('COM_YSCBCALENDAR_LOADING'); ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
             </div>
             <div class="modal-body yscbc-modal-body">
                 <div class="yscbc-modal-loading">
@@ -88,6 +87,7 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
                                 <span class="fa fa-clock-o text-center gjGroupEventIcon"></span>
                                 <span class="yscbc-modal-date-text"></span>
                                 <span class="yscbc-modal-time-text"></span>
+                                <span class="yscbc-modal-status"></span>
                             </div>
                             <div class="gjGroupEventLocation" style="display: none;">
                                 <span class="fa fa-map-marker text-center gjGroupEventIcon"></span>
@@ -111,7 +111,7 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="border: none">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <?php echo Text::_('JCLOSE'); ?>
                 </button>

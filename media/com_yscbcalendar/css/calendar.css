@@ -357,6 +357,8 @@
 #yscbcEventModal .modal-header {
     border-bottom: none;
     padding-bottom: 0;
+    justify-content: flex-end;
+    min-height: 0;
 }
 
 #yscbcEventModal .modal-body {
@@ -370,8 +372,10 @@
     min-height: 200px;
 }
 
-.yscbc-modal-card {
-    border-left: 4px solid transparent;
+.card.gjGroupEventContainer.yscbc-modal-card {
+    border-style: solid;
+    border-left-width: 10px;
+    border-color: transparent;
 }
 
 .yscbc-modal-content .gjGroupEventDate,
