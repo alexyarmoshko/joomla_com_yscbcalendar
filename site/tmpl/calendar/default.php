@@ -16,8 +16,9 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
 <div class="com-yscbc" id="yscbcalendar" data-ajax-url="<?php echo $this->escape($ajaxUrl); ?>">
     <div class="yscbc-header">
         <div class="yscbc-nav">
-            <a href="<?php echo $this->escape($this->getTodayUrl()); ?>" class="btn btn-outline-primary btn-sm yscbc-today">
-                <?php echo Text::_('COM_YSCBCALENDAR_TODAY'); ?>
+            <a href="<?php echo $this->escape($this->getTodayUrl()); ?>" class="btn btn-outline-primary yscbc-today" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_TODAY'); ?>">
+                <span class="fa-solid fa-calendar-check yscbc-btn-icon" aria-hidden="true"></span>
+                <span class="yscbc-btn-text"><?php echo Text::_('COM_YSCBCALENDAR_TODAY'); ?></span>
             </a>
         </div>
 
@@ -31,14 +32,18 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
             </a>
         </div>
 
-        <div class="yscbc-view-toggle btn-group" role="group" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_VIEW_MODE'); ?>">
+        <div class="yscbc-view-toggle" role="group" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_VIEW_MODE'); ?>">
             <a href="<?php echo $this->escape($this->getViewModeUrl('week')); ?>"
-               class="btn btn-sm <?php echo $this->viewMode === 'week' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                <?php echo Text::_('COM_YSCBCALENDAR_VIEW_WEEK'); ?>
+               class="btn <?php echo $this->viewMode === 'week' ? 'btn-primary' : 'btn-outline-primary'; ?>"
+               aria-label="<?php echo Text::_('COM_YSCBCALENDAR_VIEW_WEEK'); ?>">
+                <span class="fa-solid fa-calendar-week yscbc-btn-icon" aria-hidden="true"></span>
+                <span class="yscbc-btn-text"><?php echo Text::_('COM_YSCBCALENDAR_VIEW_WEEK'); ?></span>
             </a>
             <a href="<?php echo $this->escape($this->getViewModeUrl('month')); ?>"
-               class="btn btn-sm <?php echo $this->viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                <?php echo Text::_('COM_YSCBCALENDAR_VIEW_MONTH'); ?>
+               class="btn <?php echo $this->viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary'; ?>"
+               aria-label="<?php echo Text::_('COM_YSCBCALENDAR_VIEW_MONTH'); ?>">
+                <span class="fa-solid fa-calendar-days yscbc-btn-icon" aria-hidden="true"></span>
+                <span class="yscbc-btn-text"><?php echo Text::_('COM_YSCBCALENDAR_VIEW_MONTH'); ?></span>
             </a>
         </div>
     </div>

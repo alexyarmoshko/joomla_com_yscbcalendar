@@ -33,6 +33,7 @@ The administrator will be able to configure component settings through the Jooml
 - [x] (2026-01-28) Improvement 4: Move previous/next buttons to flank the calendar title
 - [x] (2026-01-28) Improvement 5: Treat missing event end dates as start dates
 - [x] (2026-01-28) Improvement 6: Avoid MySQL strict errors for NULL/zero event end dates
+- [x] (2026-01-28) Improvement 7: Compact mobile header with Font Awesome icons
 
 ## Surprises & Discoveries
 
@@ -175,6 +176,11 @@ The administrator will be able to configure component settings through the Jooml
 6. **[COMPLETED] Avoid MySQL strict errors for NULL/zero end dates** - Ensure SQL range filtering does not compare DATETIME columns to empty string literals.
    - **Implementation (2026-01-28):**
      - Replaced `NULLIF(e.end, '')` usage with a zero-date-only `NULLIF` expression to keep MySQL strict mode happy
+
+7. **[COMPLETED] Compact mobile header with icons** - Use Font Awesome icons for Today/Week/Month and adjust header alignment to fit small screens.
+   - **Implementation (2026-01-28):**
+     - Added icon spans for Today, Week, and Month buttons and hid text labels on small screens
+     - Switched the mobile header layout to a grid with the title on the first row and controls aligned below
 
 ## Context and Orientation
 
@@ -837,3 +843,7 @@ clean:
 **Revision Note (2026-01-28):** Implemented improvement 5 to treat empty event end dates as start dates in filtering and hydration.
 
 **Revision Note (2026-01-28):** Implemented improvement 6 to avoid MySQL strict mode errors in the event range filter.
+
+**Revision Note (2026-01-28):** Implemented improvement 7 to tighten the mobile header layout with icon buttons.
+
+**Revision Note (2026-01-28):** Refined mobile header layout to keep controls on a single line down to ~480px and only wrap below that.
