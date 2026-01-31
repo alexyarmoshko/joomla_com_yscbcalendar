@@ -308,7 +308,7 @@ class HtmlView extends BaseHtmlView
         if ($this->viewMode === 'week') {
             $prevDate->modify('-1 week');
         } else {
-            $prevDate->modify('-1 month');
+            $prevDate->modify('first day of -1 month');
         }
 
         return $this->buildNavigationUrl($prevDate);
@@ -325,7 +325,7 @@ class HtmlView extends BaseHtmlView
         if ($this->viewMode === 'week') {
             $nextDate->modify('+1 week');
         } else {
-            $nextDate->modify('+1 month');
+            $nextDate->modify('first day of +1 month');
         }
 
         return $this->buildNavigationUrl($nextDate);

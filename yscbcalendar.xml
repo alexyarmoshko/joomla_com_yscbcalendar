@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later</license>
     <authorEmail>me@kayakshaver.com</authorEmail>
     <authorUrl>https://www.kayakshaver.com</authorUrl>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>COM_YSCBCALENDAR_DESCRIPTION</description>
 
     <namespace path="src">Joomla\Component\YSCBCalendar</namespace>
