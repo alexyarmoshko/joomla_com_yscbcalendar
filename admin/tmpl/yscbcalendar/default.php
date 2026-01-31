@@ -34,7 +34,7 @@ use Joomla\CMS\Language\Text;
                 <div class="card-body">
                     <dl>
                         <dt><?php echo Text::_('COM_YSCBCALENDAR_VERSION'); ?></dt>
-                        <dd>1.0.0</dd>
+                        <dd>1.0.1</dd>
                         <dt><?php echo Text::_('COM_YSCBCALENDAR_AUTHOR'); ?></dt>
                         <dd>Yak Shaver</dd>
                     </dl>

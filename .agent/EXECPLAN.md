@@ -34,6 +34,7 @@ The administrator will be able to configure component settings through the Jooml
 - [x] (2026-01-28) Improvement 5: Treat missing event end dates as start dates
 - [x] (2026-01-28) Improvement 6: Avoid MySQL strict errors for NULL/zero event end dates
 - [x] (2026-01-28) Improvement 7: Compact mobile header with Font Awesome icons
+- [x] (2026-01-31) Bugfix 1: Fix month navigation overflow on dates like Jan 31st
 
 ## Surprises & Discoveries
 
@@ -54,6 +55,9 @@ The administrator will be able to configure component settings through the Jooml
 
 - **Observation:** MySQL strict mode errors on DATETIME comparison with empty string literals
   - **Evidence:** Production MySQL raised `1525 Incorrect DATETIME value: ''` when the query used `NULLIF(e.end, '')` on DATETIME columns.
+
+- **Observation:** PHP `DateTime::modify('+1 month')` overflows on end-of-month dates
+  - **Evidence:** On January 31st, `modify('+1 month')` produces March 3rd because "February 31st" does not exist and PHP adds 31 days, overflowing into March. Similarly, `modify('-1 month')` from March 31st produces March 3rd instead of February. The `'first day of +1 month'` modifier avoids this by targeting the 1st of the adjacent month, which is safe since month view navigation only needs to land within the correct month.
 
 ## Decision Log
 
@@ -88,6 +92,10 @@ The administrator will be able to configure component settings through the Jooml
 - **Decision:** Remove empty-string DATETIME comparisons in SQL filters
   - **Rationale:** MySQL strict mode rejects `''` as DATETIME; NULL/zero dates are handled safely via `NULLIF(e.end, '0000-00-00 00:00:00')`
   - **Date/Author:** 2026-01-28 / Implementation
+
+- **Decision:** Use `'first day of +/-1 month'` instead of `'+/-1 month'` for month navigation
+  - **Rationale:** PHP's `+1 month` on dates like Jan 31st overflows to March 3rd. Using `first day of` targets the 1st of the adjacent month, which is always valid. The exact day does not matter for month view since the calendar grid always renders the full month.
+  - **Date/Author:** 2026-01-31 / Bugfix
 
 ## Outcomes & Retrospective
 
@@ -181,6 +189,13 @@ The administrator will be able to configure component settings through the Jooml
    - **Implementation (2026-01-28):**
      - Added icon spans for Today, Week, and Month buttons and hid text labels on small screens
      - Switched the mobile header layout to a grid with the title on the first row and controls aligned below
+
+8. **[COMPLETED] Fix month navigation overflow on end-of-month dates** - The "Next" and "Previous" buttons in month view used PHP `DateTime::modify('+1 month')`, which overflows when the current date is the 31st (or 30th/29th for shorter months). For example, navigating forward from January 31st jumped to March 3rd instead of February.
+   - **Implementation (2026-01-31):**
+     - Changed `modify('+1 month')` to `modify('first day of +1 month')` in `getNextUrl()` at `site/src/View/Calendar/HtmlView.php`
+     - Changed `modify('-1 month')` to `modify('first day of -1 month')` in `getPrevUrl()` at the same file
+     - Week navigation (`+1 week` / `-1 week`) is unaffected since adding/subtracting 7 days never causes overflow
+     - Version bumped from 1.0.0 to 1.0.1 in `yscbcalendar.xml`, `yscbcalendar.update.xml`, and `admin/tmpl/yscbcalendar/default.php`
 
 ## Context and Orientation
 
@@ -847,3 +862,5 @@ clean:
 **Revision Note (2026-01-28):** Implemented improvement 7 to tighten the mobile header layout with icon buttons.
 
 **Revision Note (2026-01-28):** Refined mobile header layout to keep controls on a single line down to ~480px and only wrap below that.
+
+**Revision Note (2026-01-31):** Fixed month navigation overflow bug. PHP's `DateTime::modify('+1 month')` produces incorrect results on end-of-month dates (e.g., Jan 31 + 1 month = Mar 3). Replaced with `'first day of +/-1 month'` modifier. Bumped version to 1.0.1.
