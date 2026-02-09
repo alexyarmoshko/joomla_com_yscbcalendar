@@ -1,18 +1,6 @@
-# IDE
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
+.agent/
+.claude/
+.vscode/
+installation/
 .DS_Store
 Thumbs.db
-
-# Build artifacts
-installation/*.zip
-
-# Temporary files
-*.tmp
-*.bak
-
-.vscode/
