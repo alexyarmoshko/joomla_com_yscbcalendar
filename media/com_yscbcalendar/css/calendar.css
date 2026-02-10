@@ -13,6 +13,7 @@
     --yscbc-text-color: #3c4043;
     --yscbc-other-month-text: #80868b;
     --yscbc-hover-bg: #f1f3f4;
+    --yscbc-other-month-bg: #fafafa;
 }
 
 /* Main container */
@@ -177,7 +178,7 @@
 }
 
 .yscbc-grid-cell-month.is-other-month {
-    background-color: #fafafa;
+    background-color: var(--yscbc-other-month-bg);
 }
 
 .yscbc-grid-cell-month.is-other-month .yscbc-date-number {

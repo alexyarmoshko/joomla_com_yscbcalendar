@@ -20,6 +20,11 @@ use Joomla\Database\DatabaseInterface;
 class CalendarModel extends BaseDatabaseModel
 {
     /**
+     * CBGroupJive group type value for secret (hidden) groups.
+     */
+    private const GROUP_TYPE_SECRET = 3;
+
+    /**
      * Color palette for groups
      *
      * @var array
@@ -78,10 +83,6 @@ class CalendarModel extends BaseDatabaseModel
             ->bind(':startDate', $startDate->format('Y-m-d H:i:s'))
             ->bind(':endDate', $endDate->format('Y-m-d H:i:s'))
             ->order($startField . ' ASC');
-
-        if (!$isModerator) {
-            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
-        }
 
         $db->setQuery($query);
 
@@ -156,8 +157,9 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('i.group') . ' = ' . $db->quoteName('g.id') .
                 ' AND ' . $db->quoteName('i.accepted') . ' IS NULL' .
                 ' AND (' . $db->quoteName('i.email') . ' = ' . $db->quote($userEmail) .
-                ' OR ' . $db->quoteName('i.user') . ' = ' . (int) $userId . ')'
+                ' OR ' . $db->quoteName('i.user') . ' = :inviteUserId)'
             );
+            $query->bind(':inviteUserId', $userId, \Joomla\Database\ParameterType::INTEGER);
         }
 
         $query->where($db->quoteName('cb.approved') . ' = 1')
@@ -169,19 +171,20 @@ class CalendarModel extends BaseDatabaseModel
                 $query->where(
                     '(' . $db->quoteName('g.user_id') . ' = :userId' .
                     ' OR (' . $db->quoteName('g.published') . ' = 1' .
-                    ' AND (' . $db->quoteName('g.type') . ' != 3' .
+                    ' AND (' . $db->quoteName('g.type') . ' != ' . self::GROUP_TYPE_SECRET .
                     ' OR ' . $db->quoteName('u.id') . ' IS NOT NULL' .
                     ' OR ' . $db->quoteName('i.id') . ' IS NOT NULL)))'
                 );
             } else {
                 $query->where($db->quoteName('g.published') . ' = 1')
-                    ->where($db->quoteName('g.type') . ' != 3');
+                    ->where($db->quoteName('g.type') . ' != ' . self::GROUP_TYPE_SECRET);
             }
 
             $accessLevels = $this->getAccessLevels();
-            $accessList = implode(',', $accessLevels);
+            $accessPlaceholders = $query->bindArray($accessLevels, \Joomla\Database\ParameterType::INTEGER);
+            $accessIn = implode(',', $accessPlaceholders);
             $categoryClause = '(' . $db->quoteName('c.published') . ' = 1' .
-                ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessList . '))';
+                ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessIn . '))';
 
             if ($this->allowUncategorizedGroups()) {
                 $categoryClause = '(' . $categoryClause .
@@ -189,9 +192,6 @@ class CalendarModel extends BaseDatabaseModel
             }
 
             $query->where($categoryClause);
-        }
-
-        if (!$isModerator) {
             $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
         }
 
@@ -298,10 +298,6 @@ class CalendarModel extends BaseDatabaseModel
             ->where($db->quoteName('e.id') . ' = :eventId')
             ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER);
 
-        if (!$isModerator) {
-            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
-        }
-
         $db->setQuery($query);
 
         try {
@@ -406,6 +402,10 @@ class CalendarModel extends BaseDatabaseModel
 
         $this->applyEventAccessFilters($query, $userId, $isModerator);
 
+        if (!$isModerator) {
+            $query->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER);
+        }
+
         return $query;
     }
 
@@ -439,18 +439,19 @@ class CalendarModel extends BaseDatabaseModel
             $query->where(
                 '(' . $db->quoteName('g.user_id') . ' = :userId' .
                 ' OR (' . $db->quoteName('g.published') . ' = 1' .
-                ' AND (' . $db->quoteName('g.type') . ' != 3' .
+                ' AND (' . $db->quoteName('g.type') . ' != ' . self::GROUP_TYPE_SECRET .
                 ' OR ' . $db->quoteName('u.id') . ' IS NOT NULL)))'
             );
         } else {
             $query->where($db->quoteName('g.published') . ' = 1')
-                ->where($db->quoteName('g.type') . ' != 3');
+                ->where($db->quoteName('g.type') . ' != ' . self::GROUP_TYPE_SECRET);
         }
 
         $accessLevels = $this->getAccessLevels();
-        $accessList = implode(',', $accessLevels);
+        $accessPlaceholders = $query->bindArray($accessLevels, \Joomla\Database\ParameterType::INTEGER);
+        $accessIn = implode(',', $accessPlaceholders);
         $categoryClause = '(' . $db->quoteName('c.published') . ' = 1' .
-            ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessList . '))';
+            ' AND ' . $db->quoteName('c.access') . ' IN (' . $accessIn . '))';
 
         if ($this->allowUncategorizedGroups()) {
             $categoryClause = '(' . $categoryClause .

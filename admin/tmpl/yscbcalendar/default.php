@@ -6,7 +6,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
-/** @var \Joomla\Component\YSCBCalendar\Administrator\View\YSCBCalendar\HtmlView $this */
+/** @var \Joomla\Component\YSCBCalendar\Administrator\View\Yscbcalendar\HtmlView $this */
 ?>
 <div class="com-yscbc-dashboard">
     <div class="row">
@@ -34,7 +34,7 @@ use Joomla\CMS\Language\Text;
                 <div class="card-body">
                     <dl>
                         <dt><?php echo Text::_('COM_YSCBCALENDAR_VERSION'); ?></dt>
-                        <dd>1.0.1</dd>
+                        <dd><?php echo $this->escape($this->version); ?></dd>
                         <dt><?php echo Text::_('COM_YSCBCALENDAR_AUTHOR'); ?></dt>
                         <dd>Yak Shaver</dd>
                     </dl>

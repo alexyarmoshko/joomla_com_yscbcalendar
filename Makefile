@@ -9,7 +9,7 @@ ZIP_VERSION := $(subst .,-,$(VERSION))
 ZIP_NAME := $(COMPONENT_NAME)-v$(ZIP_VERSION).zip
 ZIP_PATH := $(INSTALL_DIR)/$(ZIP_NAME)
 
-PACKAGE_FILES := $(MANIFEST) site admin media
+PACKAGE_FILES := $(MANIFEST) LICENSE site admin media
 
 .PHONY: dist clean
 

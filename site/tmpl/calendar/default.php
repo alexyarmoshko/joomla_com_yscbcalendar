@@ -24,11 +24,11 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
 
         <div class="yscbc-title-nav" role="group">
             <a href="<?php echo $this->escape($this->getPrevUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-prev" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_PREVIOUS'); ?>">
-                <span class="fa fa-angle-left" aria-hidden="true"></span>
+                <span class="fa-solid fa-angle-left" aria-hidden="true"></span>
             </a>
             <h2 class="yscbc-title"><?php echo $this->escape($this->getPeriodTitle()); ?></h2>
             <a href="<?php echo $this->escape($this->getNextUrl()); ?>" class="btn btn-outline-secondary btn-sm yscbc-next" aria-label="<?php echo Text::_('COM_YSCBCALENDAR_NEXT'); ?>">
-                <span class="fa fa-angle-right" aria-hidden="true"></span>
+                <span class="fa-solid fa-angle-right" aria-hidden="true"></span>
             </a>
         </div>
 
@@ -91,17 +91,17 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
                         </div>
                         <div class="card-body p-2 text-small gjGroupEventDetails">
                             <div class="gjGroupEventDate">
-                                <span class="fa fa-clock-o text-center gjGroupEventIcon"></span>
+                                <span class="fa-regular fa-clock text-center gjGroupEventIcon"></span>
                                 <span class="yscbc-modal-date-text"></span>
                                 <span class="yscbc-modal-time-text"></span>
                                 <span class="yscbc-modal-status"></span>
                             </div>
                             <div class="gjGroupEventLocation" style="display: none;">
-                                <span class="fa fa-map-marker text-center gjGroupEventIcon"></span>
+                                <span class="fa-solid fa-location-dot text-center gjGroupEventIcon"></span>
                                 <span class="yscbc-modal-location-text"></span>
                             </div>
                             <div class="gjGroupEventGroup" style="display: none;">
-                                <span class="fa fa-home text-center gjGroupEventIcon"></span>
+                                <span class="fa-solid fa-house text-center gjGroupEventIcon"></span>
                                 <a class="yscbc-modal-group-link" href="#" target="_parent" rel="noopener">
                                     <span class="yscbc-modal-group-text"></span>
                                 </a>
