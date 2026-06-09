@@ -65,6 +65,8 @@ class CalendarModel extends BaseDatabaseModel
         $endField = $db->quoteName('e.end');
         $normalizedEndField = 'NULLIF(' . $endField . ", '0000-00-00 00:00:00')";
         $effectiveEndField = 'COALESCE(' . $normalizedEndField . ', ' . $startField . ')';
+        $startDateString = $startDate->format('Y-m-d H:i:s');
+        $endDateString = $endDate->format('Y-m-d H:i:s');
 
         $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
@@ -80,8 +82,8 @@ class CalendarModel extends BaseDatabaseModel
             ])
             ->where($startField . ' <= :endDate')
             ->where($effectiveEndField . ' >= :startDate')
-            ->bind(':startDate', $startDate->format('Y-m-d H:i:s'))
-            ->bind(':endDate', $endDate->format('Y-m-d H:i:s'))
+            ->bind(':startDate', $startDateString)
+            ->bind(':endDate', $endDateString)
             ->order($startField . ' ASC');
 
         $db->setQuery($query);

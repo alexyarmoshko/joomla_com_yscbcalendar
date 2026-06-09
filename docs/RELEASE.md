@@ -1,4 +1,14 @@
-# Release Notes: com_yscbcalendar v1.0.2
+# Release Notes
+
+## com_yscbcalendar v1.0.3
+
+**Release date:** 2026-06-09
+
+### Fixed
+
+- Prevented PHP notices when binding formatted calendar date range values in `CalendarModel`.
+
+## com_yscbcalendar v1.0.2
 
 **Release date:** 2026-02-10
 
