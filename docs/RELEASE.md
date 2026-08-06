@@ -60,4 +60,4 @@ No database changes or configuration migration is required.
 
 ## Full Changelog
 
-See [docs/execution_changelog.md](execution_changelog.md) for the complete version history.
+See the [releases page](https://github.com/alexyarmoshko/joomla_com_yscbcalendar/releases) for the complete version history.

@@ -25,7 +25,7 @@ A Joomla 5.x component that displays CBGroupJive events in a Google Calendar-ins
 
 ## Installation
 
-1. Build the component ZIP (see Packaging below) or download a release from the `installation/` folder.
+1. Build the component ZIP (see Packaging below), or download the latest release from the [releases page](https://github.com/alexyarmoshko/joomla_com_yscbcalendar/releases).
 2. In Joomla Administrator, go to **System > Install Extensions** and upload the ZIP.
 3. Create a menu item of type **YS CB Calendar > Calendar View** to display the calendar on the site.
 
@@ -44,7 +44,7 @@ This repo includes a Makefile for building a release ZIP. Run from the repositor
 
     make dist
 
-This creates a versioned ZIP in `installation/` (e.g. `com_yscbcalendar-v1-0-1.zip`) and updates the SHA256 hash in `yscbcalendar.update.xml`.
+This creates `installation/com_yscbcalendar-v<version>.zip`, taking the version from `yscbcalendar.xml` with dots replaced by dashes, and updates the SHA256 hash in `yscbcalendar.update.xml`.
 
 To remove the generated ZIP:
 
@@ -76,8 +76,7 @@ media/com_yscbcalendar/            Frontend assets
   js/calendar.js                   Keyboard, touch, and modal interactivity
 
 docs/                              Documentation
-  execution_plan.md                Living design and implementation document
-  execution_changelog.md           Version history and change log
+  RELEASE.md                       Release notes and upgrade instructions
 ```
 
 ## License
