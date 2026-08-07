@@ -6,11 +6,11 @@ namespace Joomla\Component\YSCBCalendar\Administrator\View\Yscbcalendar;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * View class for the YakShaver CB Calendar dashboard
@@ -57,8 +57,19 @@ class HtmlView extends BaseHtmlView
      */
     protected function getComponentVersion(): string
     {
-        $component = ComponentHelper::getComponent('com_yscbcalendar');
-        $cache = $component->manifest_cache ?? '';
+        $db      = Factory::getContainer()->get(DatabaseInterface::class);
+        $type    = 'component';
+        $element = 'com_yscbcalendar';
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = :type')
+            ->where($db->quoteName('element') . ' = :element')
+            ->bind(':type', $type)
+            ->bind(':element', $element);
+
+        $cache = (string) $db->setQuery($query)->loadResult();
 
         if ($cache === '') {
             return '';
