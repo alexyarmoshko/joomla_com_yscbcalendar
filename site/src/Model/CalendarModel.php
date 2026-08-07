@@ -8,6 +8,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Component\YSCBCalendar\Site\Service\GroupJiveGateway;
 use Joomla\Database\DatabaseInterface;
@@ -23,6 +24,11 @@ class CalendarModel extends BaseDatabaseModel
      * CBGroupJive group type value for secret (hidden) groups.
      */
     private const GROUP_TYPE_SECRET = 3;
+
+    /**
+     * Community Builder integration boundary.
+     */
+    private GroupJiveGateway $groupJiveGateway;
 
     /**
      * Color palette for groups
@@ -41,6 +47,25 @@ class CalendarModel extends BaseDatabaseModel
         '#616161',
         '#3f51b5',
     ];
+
+    /**
+     * Constructor.
+     *
+     * @param   array                     $config            Model configuration
+     * @param   MVCFactoryInterface|null  $factory           MVC factory
+     * @param   GroupJiveGateway|null     $groupJiveGateway  GroupJive gateway
+     *
+     * @throws  \Exception
+     */
+    public function __construct(
+        $config = [],
+        ?MVCFactoryInterface $factory = null,
+        ?GroupJiveGateway $groupJiveGateway = null
+    ) {
+        parent::__construct($config, $factory);
+
+        $this->groupJiveGateway = $groupJiveGateway ?? new GroupJiveGateway();
+    }
 
     /**
      * Get events for the current user within a date range.
@@ -62,7 +87,7 @@ class CalendarModel extends BaseDatabaseModel
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
 
-        if (!(new GroupJiveGateway())->canAccessEvents($userId)) {
+        if (!$this->groupJiveGateway->canAccessEvents($userId)) {
             return [];
         }
 
@@ -132,7 +157,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function buildEventUrl(int $groupId): string
     {
-        return (new GroupJiveGateway())->groupEventsUrl($groupId);
+        return $this->groupJiveGateway->groupEventsUrl($groupId);
     }
 
     /**
@@ -144,7 +169,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function buildGroupUrl(int $groupId): string
     {
-        return (new GroupJiveGateway())->groupUrl($groupId);
+        return $this->groupJiveGateway->groupUrl($groupId);
     }
 
     /**
@@ -166,7 +191,7 @@ class CalendarModel extends BaseDatabaseModel
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
 
-        if (!(new GroupJiveGateway())->canAccessEvents($userId)) {
+        if (!$this->groupJiveGateway->canAccessEvents($userId)) {
             return null;
         }
 
@@ -218,7 +243,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function resolveOwnerName(object $event): string
     {
-        return (new GroupJiveGateway())->formatOwnerName((int) $event->owner_id);
+        return $this->groupJiveGateway->formatOwnerName((int) $event->owner_id);
     }
 
     /**
@@ -234,7 +259,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function buildProfileUrl(int $userId): string
     {
-        return (new GroupJiveGateway())->userProfileUrl($userId);
+        return $this->groupJiveGateway->userProfileUrl($userId);
     }
 
     /**
@@ -388,7 +413,7 @@ class CalendarModel extends BaseDatabaseModel
     {
         $user = Factory::getApplication()->getIdentity();
 
-        return (new GroupJiveGateway())->getAccessLevels($user ? (int) $user->id : 0);
+        return $this->groupJiveGateway->getAccessLevels($user ? (int) $user->id : 0);
     }
 
     /**
@@ -400,7 +425,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function isModerator(int $userId): bool
     {
-        return (new GroupJiveGateway())->isModerator($userId);
+        return $this->groupJiveGateway->isModerator($userId);
     }
 
     /**
@@ -410,6 +435,6 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function allowUncategorizedGroups(): bool
     {
-        return (new GroupJiveGateway())->allowsUncategorizedGroups();
+        return $this->groupJiveGateway->allowsUncategorizedGroups();
     }
 }
