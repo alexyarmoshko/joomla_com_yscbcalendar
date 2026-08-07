@@ -7,11 +7,11 @@ A Joomla 5.x component that displays CBGroupJive events in a Google Calendar-ins
 - **Week and month views** with CSS Grid layout and configurable week start day
 - **Navigation controls**: previous/next period, "Today" shortcut, and week/month toggle
 - **Color-coded events** by group using a deterministic 10-color palette
-- **Event detail modal** showing title, date/time, location, description, group link, and status markers (ended/active/upcoming)
+- **Event detail modal** showing title, date/time, location, organiser profile, description, group link, and status markers (ended/active/upcoming)
 - **Keyboard navigation**: Left/Right arrows for period navigation, `t` for Today
 - **Touch/swipe navigation** for mobile devices
 - **Multi-day event support** spanning across calendar cells
-- **CBGroupJive access rules**: event visibility mirrors the "All Events" view (user approval, group category access, publication status)
+- **CBGroupJive access rules**: event visibility follows GroupJive moderator, view-level, uncategorized-group, Events-access, and publication policies
 - **Guest handling**: unauthenticated visitors see a login prompt
 - **Responsive design** with a compact mobile header using Font Awesome icons
 - **Configurable**: default view, week start day (Sunday/Monday), and time format (12h/24h)
@@ -20,7 +20,7 @@ A Joomla 5.x component that displays CBGroupJive events in a Google Calendar-ins
 ## Requirements
 
 - Joomla 5.4+
-- Community Builder with CBGroupJive plugin installed
+- Community Builder with CBGroupJive and CBGroupJive Events installed and enabled
 - PHP 8.3+
 
 ## Installation
@@ -48,7 +48,7 @@ One caveat on that claim: packages are deflated (`ZIP_LEVEL=9`), so the compress
 | --- | --- |
 | `make info` | Shows the version, the packaged file list, and the output paths. |
 | `make lint` | Syntax-checks every shipped PHP and XML file, the update template, and `media/com_yscbcalendar/js/calendar.js`. |
-| `make test` | Placeholder — this repository has no automated harness; release verification is manual. |
+| `make test` | Runs focused tests for the GroupJive policy seam and sanitized event media links. |
 | `make release` | Validates (clean tree, unused tag, release notes, test, lint) and tags the manifest `<version>`. |
 | `make dist_release` | Packages **that tag** into `installation/release/`, and writes the update descriptor beside it. |
 | `make dist_dev` | Packages the **working tree** into `installation/dev/` for a test site; strips `<updateservers>` so the test install cannot update over itself. |

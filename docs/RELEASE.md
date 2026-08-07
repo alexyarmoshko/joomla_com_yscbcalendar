@@ -3,6 +3,36 @@
 Release notes for the YakShaver CB Calendar component, newest first. Downloads are on the
 [releases page](https://github.com/alexyarmoshko/joomla_com_yscbcalendar/releases).
 
+## 1.1.0
+
+**Release date:** 2026-08-07
+
+This release aligns the calendar more closely with Community Builder and improves event details and
+error handling. No database or configuration changes are required.
+
+### Added
+
+- **Event organisers in the detail popup.** Each event now shows its organiser with a link to their
+  Community Builder profile.
+
+### Changed
+
+- **Visibility follows CBGroupJive policy.** Moderator status, view levels, uncategorized-group
+  settings, and access to GroupJive Events now determine which events appear. The group legend now
+  lists only groups represented in the displayed period.
+- **Community Builder names and links are canonical.** Organiser names, profiles, groups, and event
+  fallback links use Community Builder's own formatting and routes.
+
+### Fixed
+
+- **Relative event images and document links.** Paths beginning with `images/` now resolve from the
+  Joomla site root instead of breaking on SEF calendar routes or subdirectory installations.
+- **Community Builder dependency failures.** A missing or failed Community Builder, CBGroupJive, or
+  CBGroupJive Events dependency now produces a readable component error instead of replacing the page
+  or breaking the event popup response.
+- **Administrator version display.** The component dashboard now reads the installed version from
+  Joomla's extension record.
+
 ## 1.0.4
 
 **Release date:** 2026-08-07
