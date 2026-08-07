@@ -8,6 +8,7 @@ defined('_JEXEC') or die;
 
 use CB\Plugin\GroupJive\CBGroupJive;
 use CB\Plugin\GroupJiveEvents\CBGroupJiveEvents;
+use CBLib\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 
@@ -32,6 +33,64 @@ class GroupJiveGateway
         $this->load();
 
         return CBGroupJive::isModerator($userId);
+    }
+
+    /**
+     * Get the view access levels GroupJive uses for a user.
+     *
+     * @param   int  $userId  User ID
+     *
+     * @return  array
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function getAccessLevels(int $userId): array
+    {
+        $this->load();
+
+        $levels = array_values(array_unique(array_map('intval', CBGroupJive::getAccess($userId))));
+
+        return $levels ?: [1];
+    }
+
+    /**
+     * Check whether GroupJive permits uncategorized groups.
+     *
+     * @return  bool
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function allowsUncategorizedGroups(): bool
+    {
+        $this->load();
+
+        return (bool) CBGroupJive::getGlobalParams()->getInt('groups_uncategorized', 1);
+    }
+
+    /**
+     * Check whether GroupJive Events permits a user to view events.
+     *
+     * @param   int  $userId  User ID
+     *
+     * @return  bool
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function canAccessEvents(int $userId): bool
+    {
+        $this->load();
+
+        if (CBGroupJive::isModerator($userId)) {
+            return true;
+        }
+
+        global $_PLUGINS;
+
+        $plugin = $_PLUGINS->getLoadedPlugin('user/plug_cbgroupjive/plugins', 'cbgroupjiveevents');
+        $params = new Registry();
+        $params->load($plugin->params);
+
+        return in_array($params->getInt('groups_events_access', 1), $this->getAccessLevels($userId), true);
     }
 
     /**

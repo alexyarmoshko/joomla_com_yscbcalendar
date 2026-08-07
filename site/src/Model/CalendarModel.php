@@ -62,6 +62,11 @@ class CalendarModel extends BaseDatabaseModel
         $userId = (int) $user->id;
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
+
+        if (!(new GroupJiveGateway())->canAccessEvents($userId)) {
+            return [];
+        }
+
         $startField = $db->quoteName('e.start');
         $endField = $db->quoteName('e.end');
         $normalizedEndField = 'NULLIF(' . $endField . ", '0000-00-00 00:00:00')";
@@ -124,6 +129,10 @@ class CalendarModel extends BaseDatabaseModel
         $userEmail = (string) $user->email;
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
+
+        if (!(new GroupJiveGateway())->canAccessEvents($userId)) {
+            return [];
+        }
 
         $query = $db->getQuery(true)
             ->select([
@@ -285,6 +294,10 @@ class CalendarModel extends BaseDatabaseModel
         $userId = (int) $user->id;
         $db = $this->getDatabase();
         $isModerator = $this->isModerator($userId);
+
+        if (!(new GroupJiveGateway())->canAccessEvents($userId)) {
+            return null;
+        }
 
         $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
@@ -524,10 +537,8 @@ class CalendarModel extends BaseDatabaseModel
     protected function getAccessLevels(): array
     {
         $user = Factory::getApplication()->getIdentity();
-        $levels = $user ? $user->getAuthorisedViewLevels() : [];
-        $levels = array_values(array_unique(array_map('intval', $levels)));
 
-        return $levels ?: [1];
+        return (new GroupJiveGateway())->getAccessLevels($user ? (int) $user->id : 0);
     }
 
     /**
@@ -549,6 +560,6 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function allowUncategorizedGroups(): bool
     {
-        return true;
+        return (new GroupJiveGateway())->allowsUncategorizedGroups();
     }
 }
