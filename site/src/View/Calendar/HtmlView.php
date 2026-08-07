@@ -117,11 +117,17 @@ class HtmlView extends BaseHtmlView
         // Calculate period boundaries
         $this->calculatePeriodBoundaries();
 
-        // Get events for the current period
-        $this->events = $model->getEvents($this->periodStart, $this->periodEnd);
+        // A Community Builder dependency failure reports itself and leaves an empty
+        // calendar, rather than replacing the whole page with an error page.
+        try {
+            // Get events for the current period
+            $this->events = $model->getEvents($this->periodStart, $this->periodEnd);
 
-        // Get user's groups for the legend
-        $this->groups = $model->getUserGroups();
+            // Get user's groups for the legend
+            $this->groups = $model->getUserGroups();
+        } catch (\RuntimeException $e) {
+            $app->enqueueMessage($e->getMessage(), 'error');
+        }
 
         // Build day names array
         $this->buildDayNames();

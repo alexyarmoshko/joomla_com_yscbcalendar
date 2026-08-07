@@ -48,7 +48,14 @@ class EventController extends BaseController
             return;
         }
 
-        $event = $model->getEvent($eventId);
+        // Keep a Community Builder dependency failure inside the JSON contract, so the
+        // modal shows the error instead of failing to parse an error page.
+        try {
+            $event = $model->getEvent($eventId);
+        } catch (\RuntimeException $e) {
+            $this->sendJsonResponse(null, $e->getMessage(), true);
+            return;
+        }
 
         if ($event === null) {
             $this->sendJsonResponse(null, Text::_('COM_YSCBCALENDAR_EVENT_NOT_FOUND'), true);
