@@ -100,6 +100,12 @@ $ajaxUrl = Uri::base() . 'index.php?option=com_yscbcalendar&task=event.getEvent&
                                 <span class="fa-solid fa-location-dot text-center gjGroupEventIcon"></span>
                                 <span class="yscbc-modal-location-text"></span>
                             </div>
+                            <div class="gjGroupEventHost" style="display: none;">
+                                <span class="fa-solid fa-user text-center gjGroupEventIcon"></span>
+                                <a class="yscbc-modal-owner-link" href="#" target="_parent" rel="noopener">
+                                    <span class="yscbc-modal-owner-text"></span>
+                                </a>
+                            </div>
                             <div class="gjGroupEventGroup" style="display: none;">
                                 <span class="fa-solid fa-house text-center gjGroupEventIcon"></span>
                                 <a class="yscbc-modal-group-link" href="#" target="_parent" rel="noopener">

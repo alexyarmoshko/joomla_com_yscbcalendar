@@ -296,6 +296,9 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('e.end'),
                 $db->quoteName('g.id', 'group_id'),
                 $db->quoteName('g.name', 'group_name'),
+                $db->quoteName('e.user_id', 'owner_id'),
+                $db->quoteName('j.name', 'owner_name'),
+                $db->quoteName('j.username', 'owner_username'),
             ])
             ->where($db->quoteName('e.id') . ' = :eventId')
             ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER);
@@ -316,9 +319,58 @@ class CalendarModel extends BaseDatabaseModel
         $event->color = $this->generateGroupColor((int) $event->group_id);
         $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
         $event->group_url = $this->buildGroupUrl((int) $event->group_id);
+        $event->owner_name = $this->resolveOwnerName($event);
+        $event->owner_url = $this->buildProfileUrl((int) $event->owner_id);
         $this->hydrateEventDates($event);
 
         return $event;
+    }
+
+    /**
+     * Resolve the display name for an event owner.
+     *
+     * CBGroupJive renders the owner through CB's `formatname` field, which honours
+     * the CB `name_format` setting. This site runs format 1 ("Name Only"), which
+     * resolves to `#__users.name`; the username is a fallback for nameless accounts.
+     *
+     * @param   object  $event  The event object
+     *
+     * @return  string  The owner display name, or empty if unavailable
+     */
+    protected function resolveOwnerName(object $event): string
+    {
+        $name = trim((string) ($event->owner_name ?? ''));
+
+        if ($name !== '') {
+            return $name;
+        }
+
+        return trim((string) ($event->owner_username ?? ''));
+    }
+
+    /**
+     * Build the URL to view a user's CB profile.
+     *
+     * Routed with $xhtml = false: this URL is delivered as JSON and assigned to a
+     * DOM `href` property, which performs no entity decoding. The default `true`
+     * would emit `&amp;` and corrupt any query string that survives routing.
+     *
+     * @param   int  $userId  The user ID
+     *
+     * @return  string  The profile URL, or empty for an unknown user
+     */
+    protected function buildProfileUrl(int $userId): string
+    {
+        if ($userId <= 0) {
+            return '';
+        }
+
+        return Route::_(
+            'index.php?option=com_comprofiler'
+            . '&view=userprofile'
+            . '&user=' . $userId,
+            false
+        );
     }
 
     /**

@@ -458,6 +458,7 @@
 
 .yscbc-modal-content .gjGroupEventDate,
 .yscbc-modal-content .gjGroupEventLocation,
+.yscbc-modal-content .gjGroupEventHost,
 .yscbc-modal-content .gjGroupEventGroup {
     display: flex;
     align-items: center;
@@ -472,11 +473,14 @@
     color: var(--yscbc-header-text);
 }
 
+.yscbc-modal-owner-link,
 .yscbc-modal-group-link {
     color: inherit;
     text-decoration: none;
 }
 
+.yscbc-modal-owner-link:hover,
+.yscbc-modal-owner-link:focus,
 .yscbc-modal-group-link:hover,
 .yscbc-modal-group-link:focus {
     color: var(--yscbc-text-color);
@@ -512,6 +516,7 @@
 @media (max-width: 576px) {
     .yscbc-modal-content .gjGroupEventDate,
     .yscbc-modal-content .gjGroupEventLocation,
+    .yscbc-modal-content .gjGroupEventHost,
     .yscbc-modal-content .gjGroupEventGroup {
         font-size: 13px;
     }

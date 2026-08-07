@@ -83,6 +83,8 @@ class EventController extends BaseController
             'group_id' => (int) $event->group_id,
             'group_name' => $event->group_name,
             'group_url' => $event->group_url,
+            'owner_name' => $event->owner_name,
+            'owner_url' => $event->owner_url,
             'color' => $event->color,
             'url' => $event->url,
             'status' => $status,

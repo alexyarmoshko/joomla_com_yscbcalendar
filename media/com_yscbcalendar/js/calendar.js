@@ -351,6 +351,25 @@
             }
         }
 
+        // Set owner (hide if empty)
+        const ownerRow = modalEl.querySelector('.gjGroupEventHost');
+        const ownerLink = modalEl.querySelector('.yscbc-modal-owner-link');
+        const ownerText = modalEl.querySelector('.yscbc-modal-owner-text');
+        if (ownerRow && ownerLink && ownerText) {
+            const ownerName = eventData.owner_name || '';
+            if (ownerName) {
+                ownerRow.style.display = 'flex';
+                ownerText.textContent = ownerName;
+                if (eventData.owner_url) {
+                    ownerLink.href = eventData.owner_url;
+                } else {
+                    ownerLink.removeAttribute('href');
+                }
+            } else {
+                ownerRow.style.display = 'none';
+            }
+        }
+
         // Set group
         const groupRow = modalEl.querySelector('.gjGroupEventGroup');
         const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
@@ -410,11 +429,14 @@
         const timeText = modalEl.querySelector('.yscbc-modal-time-text');
         const statusText = modalEl.querySelector('.yscbc-modal-status');
         const locationText = modalEl.querySelector('.yscbc-modal-location-text');
+        const ownerLink = modalEl.querySelector('.yscbc-modal-owner-link');
+        const ownerText = modalEl.querySelector('.yscbc-modal-owner-text');
         const groupLink = modalEl.querySelector('.yscbc-modal-group-link');
         const groupText = modalEl.querySelector('.yscbc-modal-group-text');
         const description = modalEl.querySelector('.yscbc-modal-description');
         const descriptionWrapper = modalEl.querySelector('.yscbc-modal-description-wrapper');
         const locationEl = modalEl.querySelector('.gjGroupEventLocation');
+        const ownerRow = modalEl.querySelector('.gjGroupEventHost');
         const groupRow = modalEl.querySelector('.gjGroupEventGroup');
         const modalCard = modalEl.querySelector('.yscbc-modal-card');
 
@@ -428,6 +450,11 @@
         }
         if (locationText) locationText.textContent = '';
         if (locationEl) locationEl.style.display = 'none';
+        if (ownerLink) {
+            ownerLink.removeAttribute('href');
+        }
+        if (ownerText) ownerText.textContent = '';
+        if (ownerRow) ownerRow.style.display = 'none';
         if (groupLink) {
             groupLink.removeAttribute('href');
         }
