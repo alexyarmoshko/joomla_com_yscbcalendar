@@ -24,7 +24,7 @@ class HtmlView extends BaseHtmlView
     protected array $events = [];
 
     /**
-     * The user's groups
+     * Groups represented by events in the displayed period
      *
      * @var array
      */
@@ -123,8 +123,20 @@ class HtmlView extends BaseHtmlView
             // Get events for the current period
             $this->events = $model->getEvents($this->periodStart, $this->periodEnd);
 
-            // Get user's groups for the legend
-            $this->groups = $model->getUserGroups();
+            // Build the legend from groups represented in the current period
+            $groups = [];
+
+            foreach ($this->events as $event) {
+                $groupId = (int) $event->group_id;
+                $groups[$groupId] = (object) [
+                    'id' => $groupId,
+                    'name' => (string) $event->group_name,
+                    'color' => (string) $event->color,
+                ];
+            }
+
+            usort($groups, static fn(object $a, object $b): int => strcasecmp($a->name, $b->name));
+            $this->groups = $groups;
         } catch (\RuntimeException $e) {
             $app->enqueueMessage($e->getMessage(), 'error');
         }
