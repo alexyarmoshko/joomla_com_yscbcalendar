@@ -168,9 +168,9 @@ class EventController extends BaseController
         $cleanHtml = $filter->clean($html, 'html');
 
         // InputFilter normalizes attributes to lowercase names with double-quoted values.
-        // Keep the tag and directory case-insensitive, but re-emit the path's original case.
+        // Keep tags and directories case-insensitive, but re-emit the path's original case.
         return preg_replace_callback(
-            '#(<img\b[^>]*\bsrc=")(images/)#i',
+            '#(<(?:img\b[^>]*\bsrc|a\b[^>]*\bhref)=")(images/)#i',
             static fn(array $matches): string => $matches[1] . Uri::root(true) . '/' . $matches[2],
             $cleanHtml
         ) ?? $cleanHtml;

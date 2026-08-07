@@ -57,15 +57,14 @@ namespace {
     }
 
     $controller = new TestableEventController();
-    // Relative links are deliberately outside this observed image-failure fix.
     $html = '<p><img src="images/event.jpeg"><img src="/images/root.jpeg">'
         . '<img src="https://cdn.example/image.jpeg"><a href="images/file.pdf">File</a></p>';
 
     assertSameHtml(
         '<p><img src="/subsite/images/event.jpeg"><img src="/images/root.jpeg">'
-            . '<img src="https://cdn.example/image.jpeg"><a href="images/file.pdf">File</a></p>',
+            . '<img src="https://cdn.example/image.jpeg"><a href="/subsite/images/file.pdf">File</a></p>',
         $controller->sanitize($html),
-        'relative event images use the Joomla site-root path without changing other URLs'
+        'relative event images and links use the Joomla site-root path without changing other URLs'
     );
 
     // The sanitizer re-emits tag names as written, so `<IMG>` reaches this path; the host
