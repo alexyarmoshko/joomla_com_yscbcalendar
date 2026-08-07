@@ -10,6 +10,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
+use Joomla\Component\YSCBCalendar\Site\Service\GroupJiveGateway;
 use Joomla\Database\DatabaseInterface;
 
 /**
@@ -538,13 +539,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function isModerator(int $userId): bool
     {
-        if ($userId <= 0) {
-            return false;
-        }
-
-        // Default to Joomla super users if CBGroupJive is not available.
-        $user = Factory::getApplication()->getIdentity();
-        return $user ? $user->authorise('core.admin') : false;
+        return (new GroupJiveGateway())->isModerator($userId);
     }
 
     /**

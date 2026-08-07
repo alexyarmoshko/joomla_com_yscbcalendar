@@ -33,6 +33,7 @@ PACKAGE_FILES := \
 	site/src/Controller/EventController.php \
 	site/src/Dispatcher/Dispatcher.php \
 	site/src/Model/CalendarModel.php \
+	site/src/Service/GroupJiveGateway.php \
 	site/src/View/Calendar/HtmlView.php \
 	site/tmpl/calendar/default.php \
 	site/tmpl/calendar/default.xml \
