@@ -40,7 +40,7 @@ class GroupJiveGateway
      *
      * @param   int  $userId  User ID
      *
-     * @return  array
+     * @return  array  Access levels, or an empty array when none are available
      *
      * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
      */
@@ -50,7 +50,7 @@ class GroupJiveGateway
 
         $levels = array_values(array_unique(array_map('intval', CBGroupJive::getAccess($userId))));
 
-        return $levels ?: [1];
+        return $levels;
     }
 
     /**
@@ -114,6 +114,9 @@ class GroupJiveGateway
     /**
      * Get a user's canonical Community Builder profile URL.
      *
+     * HTML escaping is disabled because the URL is returned as data; callers need
+     * literal ampersands rather than `&amp;` entities.
+     *
      * @param   int  $userId  User ID
      *
      * @return  string
@@ -136,6 +139,9 @@ class GroupJiveGateway
     /**
      * Get a group's canonical GroupJive URL.
      *
+     * HTML escaping is disabled because the URL is returned as data; callers need
+     * literal ampersands rather than `&amp;` entities.
+     *
      * @param   int  $groupId  Group ID
      *
      * @return  string
@@ -157,6 +163,9 @@ class GroupJiveGateway
 
     /**
      * Get a group's canonical GroupJive Events tab URL.
+     *
+     * HTML escaping is disabled because the URL is returned as data; callers need
+     * literal ampersands rather than `&amp;` entities.
      *
      * @param   int  $groupId  Group ID
      *

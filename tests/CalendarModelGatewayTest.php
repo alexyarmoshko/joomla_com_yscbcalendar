@@ -46,8 +46,12 @@ namespace {
 
     final class FakeGroupJiveGateway extends GroupJiveGateway
     {
+        public int $moderatorCalls = 0;
+
         public function isModerator(int $userId): bool
         {
+            $this->moderatorCalls++;
+
             return $userId === 42;
         }
 
@@ -95,7 +99,7 @@ namespace {
                 $this->isModerator(42),
                 $this->getAccessLevels(),
                 $this->allowUncategorizedGroups(),
-                $this->buildEventUrl(9),
+                $this->buildGroupEventsUrl(9),
                 $this->buildGroupUrl(9),
                 $this->resolveOwnerName((object) ['owner_id' => 12]),
                 $this->buildProfileUrl(12),
@@ -135,6 +139,7 @@ namespace {
         'policy and enrichment calls use the injected gateway'
     );
     assertSameValue([], $model->getEvents(new \DateTimeImmutable(), new \DateTimeImmutable()), 'denied Events access returns no data');
+    assertSameValue(1, $gateway->moderatorCalls, 'denied Events access skips the separate moderator lookup');
 
     echo 'CalendarModel gateway tests: ok' . PHP_EOL;
 }

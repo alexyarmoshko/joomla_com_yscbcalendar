@@ -84,13 +84,13 @@ class CalendarModel extends BaseDatabaseModel
         }
 
         $userId = (int) $user->id;
-        $db = $this->getDatabase();
-        $isModerator = $this->isModerator($userId);
 
         if (!$this->groupJiveGateway->canAccessEvents($userId)) {
             return [];
         }
 
+        $db = $this->getDatabase();
+        $isModerator = $this->isModerator($userId);
         $startField = $db->quoteName('e.start');
         $endField = $db->quoteName('e.end');
         $normalizedEndField = 'NULLIF(' . $endField . ", '0000-00-00 00:00:00')";
@@ -128,7 +128,7 @@ class CalendarModel extends BaseDatabaseModel
         // Add color and URL to each event
         foreach ($events as $event) {
             $event->color = $this->generateGroupColor((int) $event->group_id);
-            $event->url = $this->buildEventUrl((int) $event->group_id);
+            $event->url = $this->buildGroupEventsUrl((int) $event->group_id);
             $event->group_url = $this->buildGroupUrl((int) $event->group_id);
             $this->hydrateEventDates($event);
         }
@@ -149,13 +149,13 @@ class CalendarModel extends BaseDatabaseModel
     }
 
     /**
-     * Build the URL to view an event in CBGroupJive.
+     * Build the URL to view a group's Events tab in CBGroupJive.
      *
      * @param   int  $groupId  The group ID
      *
-     * @return  string  The event URL
+     * @return  string  The group Events tab URL
      */
-    protected function buildEventUrl(int $groupId): string
+    protected function buildGroupEventsUrl(int $groupId): string
     {
         return $this->groupJiveGateway->groupEventsUrl($groupId);
     }
@@ -188,13 +188,13 @@ class CalendarModel extends BaseDatabaseModel
         }
 
         $userId = (int) $user->id;
-        $db = $this->getDatabase();
-        $isModerator = $this->isModerator($userId);
 
         if (!$this->groupJiveGateway->canAccessEvents($userId)) {
             return null;
         }
 
+        $db = $this->getDatabase();
+        $isModerator = $this->isModerator($userId);
         $query = $this->buildBaseEventQuery($userId, $isModerator)
             ->select([
                 $db->quoteName('e.id'),
@@ -225,7 +225,7 @@ class CalendarModel extends BaseDatabaseModel
 
         // Add color and URL to the event
         $event->color = $this->generateGroupColor((int) $event->group_id);
-        $event->url = $this->buildEventUrl((int) $event->group_id);
+        $event->url = $this->buildGroupEventsUrl((int) $event->group_id);
         $event->group_url = $this->buildGroupUrl((int) $event->group_id);
         $event->owner_name = $this->resolveOwnerName($event);
         $event->owner_url = $this->buildProfileUrl((int) $event->owner_id);
@@ -248,10 +248,6 @@ class CalendarModel extends BaseDatabaseModel
 
     /**
      * Build the URL to view a user's CB profile.
-     *
-     * Routed with $xhtml = false: this URL is delivered as JSON and assigned to a
-     * DOM `href` property, which performs no entity decoding. The default `true`
-     * would emit `&amp;` and corrupt any query string that survives routing.
      *
      * @param   int  $userId  The user ID
      *
@@ -412,8 +408,9 @@ class CalendarModel extends BaseDatabaseModel
     protected function getAccessLevels(): array
     {
         $user = Factory::getApplication()->getIdentity();
+        $levels = $this->groupJiveGateway->getAccessLevels($user ? (int) $user->id : 0);
 
-        return $this->groupJiveGateway->getAccessLevels($user ? (int) $user->id : 0);
+        return $levels ?: [1];
     }
 
     /**
