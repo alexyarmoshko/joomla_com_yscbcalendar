@@ -62,13 +62,13 @@ DEV_ZIP := $(INSTALL_DIR)/dev/$(ZIP_NAME)
 UPDATE_ARTIFACT := $(INSTALL_DIR)/release/$(UPDATE_TEMPLATE)
 DOWNLOAD_URL := https://github.com/$(GITHUB_OWNER)/$(GITHUB_REPO)/releases/download/$(VERSION)/$(ZIP_NAME)
 
-# No Composer here: this component has no dependencies and no automated harness.
+# No Composer here: this component has no external dependencies.
 # These are the repository's own gates, and `release` runs them before it tags - so
 # they are `:=`, not `?=`: an environment variable of the same name must not be able
 # to replace them silently. That also means they must be defined AFTER the variables
 # they reference, since `:=` expands immediately.
 DEPS_CMD ?= @echo "No dependencies to install."
-TEST_CMD := echo "No automated test harness in this repository - release verification is manual."
+TEST_CMD := php tests/CalendarModelGatewayTest.php
 # $(JZIP) is linted although it does not ship: it is the packager, and a syntax
 # error in it would otherwise surface only after `release` has created the tag.
 LINT_CMD := set -e; \
