@@ -21,6 +21,16 @@ package is the update-server URL in the manifest.
   packager, so its published `sha256` can be re-derived from that tag on any machine rather than
   depending on the machine that built it.
 
+### Fixed
+
+- **Automatic updates never worked.** The update descriptor declared `<client>site</client>`, but
+  Joomla registers components under the administrator client. The advertised update therefore never
+  bound to the installed component and was filtered out of the update list, so no site has ever been
+  offered an update for this component since 1.0.0 — installs and upgrades had to be done by hand.
+  The descriptor now declares `<client>administrator</client>`. Sites that polled the old descriptor
+  hold a stale entry that must be cleared before the corrected one is picked up; see Upgrade
+  Instructions.
+
 ## 1.0.3
 
 **Release date:** 2026-06-09
@@ -130,4 +140,8 @@ Those sites will therefore report "no updates available" indefinitely. Either:
 - go to **System > Update Sites**, open **YakShaver CB Calendar Updates**, and set the location to
   `https://raw.githubusercontent.com/alexyarmoshko/joomla_update_system/refs/heads/main/manifests/com_yscbcalendar.update.xml`.
 
-Once corrected, later releases arrive through the normal Joomla updater.
+Then go to **System > Update > Extensions** and use **Clear Cache**. This is needed because of the
+`<client>` fix above: the old descriptor left a stale, unattached entry that Joomla will not replace
+on its own, and it would otherwise mask the corrected one.
+
+Once both are done, later releases arrive through the normal Joomla updater.

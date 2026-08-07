@@ -42,7 +42,7 @@ In Joomla Administrator:
 
 Packages are **reproducible**: the ZIP bytes depend only on the packaged files and one timestamp — nothing about the machine that built it — so a release can be rebuilt from its tag and still hash to the `sha256` the update descriptor claims. Needs `make`, `git`, `php` and `node` — no Composer, no `zip` binary; the packager is the vendored `tools/jzip.php`.
 
-One caveat on that claim: packages are deflated (`ZIP_LEVEL=9`), so the compressed bytes come from zlib. That is stable across zlib *versions*, but not guaranteed across *implementations* — zlib-ng, shipped as the zlib provider by some distributions, deflates differently. Build with `make dist_release ZIP_LEVEL=0` if a third party has to re-derive the checksum with no assumption about the compressor; it stores rather than deflates and is reproducible by construction, at a cost in size.
+One caveat on that claim: packages are deflated (`ZIP_LEVEL=9`), so the compressed bytes come from zlib. That is stable across zlib *versions*, but not guaranteed across *implementations* — zlib-ng, shipped as the zlib provider by some distributions, deflates differently. If a third party has to re-derive the checksum with no assumption about the compressor, change `ZIP_LEVEL` to `0` in the [Makefile](Makefile) and commit it — storing rather than deflating is reproducible by construction, at about 3.4× the size. It has to be committed rather than passed on the command line: `dist_release` refuses a command-line `ZIP_LEVEL`, because anything that decides the published bytes must come from the tagged Makefile or a clean checkout of the tag cannot reproduce them.
 
 | Target | What it does |
 | --- | --- |
