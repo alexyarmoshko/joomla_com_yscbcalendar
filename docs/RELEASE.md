@@ -3,7 +3,25 @@
 Release notes for the YakShaver CB Calendar component, newest first. Downloads are on the
 [releases page](https://github.com/alexyarmoshko/joomla_com_yscbcalendar/releases).
 
-## com_yscbcalendar v1.0.3
+## 1.0.4
+
+**Release date:** 2026-08-07
+
+A packaging and update-server release. No component code changed; the only difference inside the
+package is the update-server URL in the manifest.
+
+### Changed
+
+- **Update server moved.** The extension's update site now points at
+  [joomla_update_system](https://github.com/alexyarmoshko/joomla_update_system) instead of this
+  repository's `main` branch. Joomla stores the update site **per site at install time**, so sites
+  running 1.0.3 or earlier will not be offered this release, or any later one, until their update
+  site is corrected — see Upgrade Instructions below.
+- **Reproducible release packages.** The package is now built from the git tag with a deterministic
+  packager, so its published `sha256` can be re-derived from that tag on any machine rather than
+  depending on the machine that built it.
+
+## 1.0.3
 
 **Release date:** 2026-06-09
 
@@ -11,7 +29,7 @@ Release notes for the YakShaver CB Calendar component, newest first. Downloads a
 
 - **PHP notices when binding calendar date range values.** Formatted start and end date strings are now stored in variables before being passed to Joomla query `bind()` calls in `CalendarModel`, avoiding "Only variables should be passed by reference" notices.
 
-## com_yscbcalendar v1.0.2
+## 1.0.2
 
 **Release date:** 2026-02-10
 
@@ -52,7 +70,7 @@ This is a security and maintenance release. It fixes a stored XSS vulnerability 
 | `yscbcalendar.xml` | Version bump to 1.0.2 |
 | `yscbcalendar.update.xml` | Version and download URL bump to 1.0.2 |
 
-## com_yscbcalendar v1.0.1
+## 1.0.1
 
 **Release date:** 2026-01-31
 
@@ -60,7 +78,7 @@ This is a security and maintenance release. It fixes a stored XSS vulnerability 
 
 - **Month navigation overflow on end-of-month dates.** PHP's `DateTime::modify('+1 month')` gives incorrect results on dates such as 31 January, overflowing to 3 March because "31 February" does not exist. `getNextUrl()` and `getPrevUrl()` now use `first day of +1 month` / `first day of -1 month`. Week navigation is unaffected, since adding or subtracting seven days never overflows.
 
-## com_yscbcalendar v1.0.0
+## 1.0.0
 
 **Release date:** 2026-01-28
 
@@ -102,3 +120,14 @@ Initial release of the YakShaver CB Calendar component.
 3. Upload the ZIP. The installer will upgrade the existing component in place.
 
 No database changes or configuration migration are required for any release to date.
+
+### Upgrading from 1.0.3 or earlier
+
+The update server moved in 1.0.4, and Joomla remembers the update site each site was installed with.
+Those sites will therefore report "no updates available" indefinitely. Either:
+
+- install the 1.0.4 ZIP by hand as above, which rewrites the stored update site; or
+- go to **System > Update Sites**, open **YakShaver CB Calendar Updates**, and set the location to
+  `https://raw.githubusercontent.com/alexyarmoshko/joomla_update_system/refs/heads/main/manifests/com_yscbcalendar.update.xml`.
+
+Once corrected, later releases arrive through the normal Joomla updater.
