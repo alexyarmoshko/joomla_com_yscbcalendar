@@ -94,6 +94,90 @@ class GroupJiveGateway
     }
 
     /**
+     * Get a user's Community Builder formatted name as plain text.
+     *
+     * @param   int  $userId  User ID
+     *
+     * @return  string
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function formatOwnerName(int $userId): string
+    {
+        $this->load();
+
+        $name = \CBuser::getUserDataInstance($userId)->getFormattedName();
+
+        return htmlspecialchars_decode($name, ENT_QUOTES | ENT_HTML5);
+    }
+
+    /**
+     * Get a user's canonical Community Builder profile URL.
+     *
+     * @param   int  $userId  User ID
+     *
+     * @return  string
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function userProfileUrl(int $userId): string
+    {
+        $this->load();
+
+        if ($userId <= 0) {
+            return '';
+        }
+
+        global $_CB_framework;
+
+        return $_CB_framework->userProfileUrl($userId, false);
+    }
+
+    /**
+     * Get a group's canonical GroupJive URL.
+     *
+     * @param   int  $groupId  Group ID
+     *
+     * @return  string
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function groupUrl(int $groupId): string
+    {
+        $this->load();
+
+        global $_CB_framework;
+
+        return $_CB_framework->pluginClassUrl(
+            'cbgroupjive',
+            false,
+            ['action' => 'groups', 'func' => 'show', 'id' => $groupId]
+        );
+    }
+
+    /**
+     * Get a group's canonical GroupJive Events tab URL.
+     *
+     * @param   int  $groupId  Group ID
+     *
+     * @return  string
+     *
+     * @throws  \RuntimeException  When the Community Builder dependencies are unavailable
+     */
+    public function groupEventsUrl(int $groupId): string
+    {
+        $this->load();
+
+        global $_CB_framework;
+
+        return $_CB_framework->pluginClassUrl(
+            'cbgroupjive',
+            false,
+            ['action' => 'groups', 'func' => 'show', 'id' => $groupId, 'tab' => 'grouptabevents']
+        );
+    }
+
+    /**
      * Load and verify the component's Community Builder dependencies.
      *
      * @return  void
@@ -135,7 +219,7 @@ class GroupJiveGateway
      */
     private function bootstrap(): string
     {
-        global $_PLUGINS;
+        global $_CB_framework, $_PLUGINS;
 
         $requiredFiles = [
             JPATH_SITE . '/libraries/CBLib/CBLib/Core/CBLib.php',
@@ -157,6 +241,17 @@ class GroupJiveGateway
 
         cbimport('cb.html');
         cbimport('language.front');
+
+        if (
+            !class_exists(\CBuser::class)
+            || !method_exists(\CBuser::class, 'getUserDataInstance')
+            || !isset($_CB_framework)
+            || !is_object($_CB_framework)
+            || !method_exists($_CB_framework, 'userProfileUrl')
+            || !method_exists($_CB_framework, 'pluginClassUrl')
+        ) {
+            return 'Community Builder did not provide its user and URL helpers.';
+        }
 
         if (!isset($_PLUGINS) || !is_object($_PLUGINS)) {
             return 'Community Builder did not create the $_PLUGINS plugin handler.';

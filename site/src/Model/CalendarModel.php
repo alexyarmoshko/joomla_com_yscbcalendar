@@ -9,7 +9,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Router\Route;
 use Joomla\Component\YSCBCalendar\Site\Service\GroupJiveGateway;
 use Joomla\Database\DatabaseInterface;
 
@@ -104,7 +103,7 @@ class CalendarModel extends BaseDatabaseModel
         // Add color and URL to each event
         foreach ($events as $event) {
             $event->color = $this->generateGroupColor((int) $event->group_id);
-            $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
+            $event->url = $this->buildEventUrl((int) $event->group_id);
             $event->group_url = $this->buildGroupUrl((int) $event->group_id);
             $this->hydrateEventDates($event);
         }
@@ -239,22 +238,13 @@ class CalendarModel extends BaseDatabaseModel
     /**
      * Build the URL to view an event in CBGroupJive.
      *
-     * @param   int  $eventId  The event ID
      * @param   int  $groupId  The group ID
      *
      * @return  string  The event URL
      */
-    protected function buildEventUrl(int $eventId, int $groupId): string
+    protected function buildEventUrl(int $groupId): string
     {
-        return Route::_(
-            'index.php?option=com_comprofiler'
-            . '&view=pluginclass'
-            . '&plugin=cbgroupjiveevents'
-            . '&action=events.show'
-            . '&func=show'
-            . '&id=' . $eventId
-            . '&group=' . $groupId
-        );
+        return (new GroupJiveGateway())->groupEventsUrl($groupId);
     }
 
     /**
@@ -266,14 +256,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function buildGroupUrl(int $groupId): string
     {
-        return Route::_(
-            'index.php?option=com_comprofiler'
-            . '&view=pluginclass'
-            . '&plugin=cbgroupjive'
-            . '&action=groups'
-            . '&func=show'
-            . '&id=' . $groupId
-        );
+        return (new GroupJiveGateway())->groupUrl($groupId);
     }
 
     /**
@@ -311,8 +294,6 @@ class CalendarModel extends BaseDatabaseModel
                 $db->quoteName('g.id', 'group_id'),
                 $db->quoteName('g.name', 'group_name'),
                 $db->quoteName('e.user_id', 'owner_id'),
-                $db->quoteName('j.name', 'owner_name'),
-                $db->quoteName('j.username', 'owner_username'),
             ])
             ->where($db->quoteName('e.id') . ' = :eventId')
             ->bind(':eventId', $eventId, \Joomla\Database\ParameterType::INTEGER);
@@ -331,7 +312,7 @@ class CalendarModel extends BaseDatabaseModel
 
         // Add color and URL to the event
         $event->color = $this->generateGroupColor((int) $event->group_id);
-        $event->url = $this->buildEventUrl((int) $event->id, (int) $event->group_id);
+        $event->url = $this->buildEventUrl((int) $event->group_id);
         $event->group_url = $this->buildGroupUrl((int) $event->group_id);
         $event->owner_name = $this->resolveOwnerName($event);
         $event->owner_url = $this->buildProfileUrl((int) $event->owner_id);
@@ -341,11 +322,7 @@ class CalendarModel extends BaseDatabaseModel
     }
 
     /**
-     * Resolve the display name for an event owner.
-     *
-     * CBGroupJive renders the owner through CB's `formatname` field, which honours
-     * the CB `name_format` setting. This site runs format 1 ("Name Only"), which
-     * resolves to `#__users.name`; the username is a fallback for nameless accounts.
+     * Resolve the Community Builder display name for an event owner.
      *
      * @param   object  $event  The event object
      *
@@ -353,13 +330,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function resolveOwnerName(object $event): string
     {
-        $name = trim((string) ($event->owner_name ?? ''));
-
-        if ($name !== '') {
-            return $name;
-        }
-
-        return trim((string) ($event->owner_username ?? ''));
+        return (new GroupJiveGateway())->formatOwnerName((int) $event->owner_id);
     }
 
     /**
@@ -375,16 +346,7 @@ class CalendarModel extends BaseDatabaseModel
      */
     protected function buildProfileUrl(int $userId): string
     {
-        if ($userId <= 0) {
-            return '';
-        }
-
-        return Route::_(
-            'index.php?option=com_comprofiler'
-            . '&view=userprofile'
-            . '&user=' . $userId,
-            false
-        );
+        return (new GroupJiveGateway())->userProfileUrl($userId);
     }
 
     /**
