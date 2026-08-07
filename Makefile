@@ -68,7 +68,7 @@ DOWNLOAD_URL := https://github.com/$(GITHUB_OWNER)/$(GITHUB_REPO)/releases/downl
 # to replace them silently. That also means they must be defined AFTER the variables
 # they reference, since `:=` expands immediately.
 DEPS_CMD ?= @echo "No dependencies to install."
-TEST_CMD := php tests/CalendarModelGatewayTest.php
+TEST_CMD := php tests/CalendarModelGatewayTest.php && php tests/EventControllerHtmlTest.php
 # $(JZIP) is linted although it does not ship: it is the packager, and a syntax
 # error in it would otherwise surface only after `release` has created the tag.
 LINT_CMD := set -e; \

@@ -11,6 +11,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Component\YSCBCalendar\Site\Model\CalendarModel;
 use Joomla\Filter\InputFilter;
 
@@ -164,7 +165,16 @@ class EventController extends BaseController
             InputFilter::ONLY_ALLOW_DEFINED_ATTRIBUTES
         );
 
-        return $filter->clean($html, 'html');
+        $cleanHtml = $filter->clean($html, 'html');
+
+        // The directory is captured rather than retyped: the pattern is case-insensitive so
+        // that `<IMG>` still matches, and the host is case-sensitive, so the path segment
+        // must be re-emitted exactly as it was written.
+        return preg_replace_callback(
+            '#(<img\b[^>]*\bsrc\s*=\s*["\'])(images/)#i',
+            static fn(array $matches): string => $matches[1] . Uri::root() . $matches[2],
+            $cleanHtml
+        ) ?? $cleanHtml;
     }
 
     /**
