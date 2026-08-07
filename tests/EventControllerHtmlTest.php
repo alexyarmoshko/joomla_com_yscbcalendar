@@ -75,5 +75,11 @@ namespace {
         'an uppercase tag is rewritten without folding the directory case'
     );
 
+    assertSameHtml(
+        '<A href="/subsite/Images/file.pdf">',
+        $controller->sanitize('<A href="Images/file.pdf">'),
+        'the anchor branch also preserves the directory case'
+    );
+
     echo 'EventController image URL tests: ok' . PHP_EOL;
 }
