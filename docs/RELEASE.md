@@ -30,6 +30,11 @@ package is the update-server URL in the manifest.
   The descriptor now declares `<client>administrator</client>`. Sites that polled the old descriptor
   hold a stale entry that must be cleared before the corrected one is picked up; see Upgrade
   Instructions.
+- **The update descriptor now states the tested platform floor.** It previously accepted any Joomla
+  5.x with no PHP constraint, so a site below the supported versions could have been offered an
+  update it cannot run. It now declares `<php_minimum>8.3</php_minimum>` and matches Joomla 5.4 and
+  above. This only affects what the updater offers — installing the ZIP by hand is unchanged, and
+  nothing here alters the component's own requirements.
 
 ## 1.0.3
 
