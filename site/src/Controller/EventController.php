@@ -167,12 +167,11 @@ class EventController extends BaseController
 
         $cleanHtml = $filter->clean($html, 'html');
 
-        // The directory is captured rather than retyped: the pattern is case-insensitive so
-        // that `<IMG>` still matches, and the host is case-sensitive, so the path segment
-        // must be re-emitted exactly as it was written.
+        // InputFilter normalizes attributes to lowercase names with double-quoted values.
+        // Keep the tag and directory case-insensitive, but re-emit the path's original case.
         return preg_replace_callback(
-            '#(<img\b[^>]*\bsrc\s*=\s*["\'])(images/)#i',
-            static fn(array $matches): string => $matches[1] . Uri::root() . $matches[2],
+            '#(<img\b[^>]*\bsrc=")(images/)#i',
+            static fn(array $matches): string => $matches[1] . Uri::root(true) . '/' . $matches[2],
             $cleanHtml
         ) ?? $cleanHtml;
     }

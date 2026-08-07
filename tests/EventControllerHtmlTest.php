@@ -9,9 +9,9 @@ namespace Joomla\CMS\MVC\Controller {
 namespace Joomla\CMS\Uri {
     class Uri
     {
-        public static function root(): string
+        public static function root(bool $pathonly = false): string
         {
-            return 'https://example.test/subsite/';
+            return $pathonly ? '/subsite' : 'https://example.test/subsite/';
         }
     }
 }
@@ -57,20 +57,21 @@ namespace {
     }
 
     $controller = new TestableEventController();
+    // Relative links are deliberately outside this observed image-failure fix.
     $html = '<p><img src="images/event.jpeg"><img src="/images/root.jpeg">'
         . '<img src="https://cdn.example/image.jpeg"><a href="images/file.pdf">File</a></p>';
 
     assertSameHtml(
-        '<p><img src="https://example.test/subsite/images/event.jpeg"><img src="/images/root.jpeg">'
+        '<p><img src="/subsite/images/event.jpeg"><img src="/images/root.jpeg">'
             . '<img src="https://cdn.example/image.jpeg"><a href="images/file.pdf">File</a></p>',
         $controller->sanitize($html),
-        'relative event images use the Joomla site root without changing other URLs'
+        'relative event images use the Joomla site-root path without changing other URLs'
     );
 
     // The sanitizer re-emits tag names as written, so `<IMG>` reaches this path; the host
     // is case-sensitive, so the directory must survive the rewrite unchanged.
     assertSameHtml(
-        '<IMG src="https://example.test/subsite/Images/event.jpeg">',
+        '<IMG src="/subsite/Images/event.jpeg">',
         $controller->sanitize('<IMG src="Images/event.jpeg">'),
         'an uppercase tag is rewritten without folding the directory case'
     );
